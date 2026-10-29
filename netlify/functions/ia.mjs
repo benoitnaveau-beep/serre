@@ -1,6 +1,6 @@
 // Netlify Function : la clé GEMINI_API_KEY reste côté serveur (variable d'environnement Netlify).
 // Les prompts sont construits ici : la page ne peut pas servir d'IA généraliste.
-const MODEL = 'gemini-2.5-flash';
+const MODELS = ['gemini-2.5-flash', 'gemini-flash-latest'];
 const cut = (s, n = 700) => String(s || '').slice(0, n);
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -26,19 +26,28 @@ Situation de classe décrite par l'enseignant : ${cut(b.situation, 600)}
 Construis une mission sur mesure : palier du continuum le plus adapté (et pourquoi), séance en 4 étapes minutées, matériel, un aménagement inclusif, un critère d'évaluation. Maximum 250 mots.`;
   } else return json({ error: 'Mode inconnu' }, 400);
 
-  try {
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 900, thinkingConfig: { thinkingBudget: 0 } }
-      })
-    });
-    if (!r.ok) return json({ error: 'IA indisponible' }, 502);
-    const t = (await r.json()).candidates?.[0]?.content?.parts?.[0]?.text;
-    return json({ text: t || '' });
-  } catch { return json({ error: 'IA indisponible' }, 502); }
+  let detail = '';
+  for (const model of MODELS) {
+    try {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
+        })
+      });
+      const data = await r.json().catch(() => ({}));
+      if (r.ok) {
+        const t = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
+        if (t) return json({ text: t });
+        detail = `${model} : réponse vide (${data.candidates?.[0]?.finishReason || 'inconnue'})`;
+      } else {
+        detail = `${model} : ${r.status} ${data.error?.message || ''}`.slice(0, 300);
+      }
+    } catch (e) { detail = `${model} : ${String(e.message || e)}`.slice(0, 300); }
+  }
+  return json({ error: 'IA indisponible', detail }, 502);
 };
 
 export const config = { path: '/api/ia' };
