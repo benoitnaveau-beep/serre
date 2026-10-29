@@ -22,18 +22,18 @@ Donne un retour bienveillant en 4 lignes maximum : ce qui est juste, ce qui manq
   } else if (b.mode === 'classe') {
     prompt = `${cadre}
 Situation de classe décrite par l'enseignant : ${cut(b.situation, 600)}
-Construis une mission sur mesure : palier du continuum le plus adapté (et pourquoi), séance en 4 étapes minutées, matériel, un aménagement inclusif, un critère d'évaluation. Maximum 250 mots.`;
+Construis une mission sur mesure : palier du continuum le plus adapté (et pourquoi), séance en 4 étapes minutées, matériel, un aménagement inclusif, un critère d'évaluation. Maximum 180 mots.`;
   } else return json({ error: 'Mode inconnu' }, 400);
 
-  // Netlify coupe les fonctions vers 10 s : on borne chaque appel pour toujours répondre.
+  // Chaque appel est borné pour toujours répondre avant la coupure de Netlify (10 à 26 s selon le plan).
   const t0 = Date.now();
   const essais = [
-    { model: 'gemini-3.8-flash', max: 6500 },
-    { model: 'gemini-3.7-flash', max: 9000 }
+    { model: 'gemini-3.8-flash', max: 22000 },
+    { model: 'gemini-3.7-flash', max: 22000 }
   ];
   let detail = '';
   for (const e of essais) {
-    const reste = 9200 - (Date.now() - t0);
+    const reste = 24000 - (Date.now() - t0);
     if (reste < 1500) break;
     try {
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${e.model}:generateContent`, {
@@ -42,18 +42,18 @@ Construis une mission sur mesure : palier du continuum le plus adapté (et pourq
         signal: AbortSignal.timeout(Math.min(e.max, reste)),
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 1200, thinkingConfig: { thinkingLevel: 'low' } }
+          generationConfig: { maxOutputTokens: 800, thinkingConfig: { thinkingLevel: 'low' } }
         })
       });
       const data = await r.json().catch(() => ({}));
       if (r.ok) {
         const t = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
-        if (t) return json({ text: t });
+        if (t) return json({ text: t, ms: Date.now() - t0 });
         detail += `${e.model} : réponse vide (${data.candidates?.[0]?.finishReason || 'inconnue'}) | `;
       } else {
         detail += `${e.model} : ${r.status} ${data.error?.message || ''} | `;
       }
-    } catch (err) { detail += `${e.model} : ${err.name === 'TimeoutError' ? 'délai dépassé' : String(err.message || err)} | `; }
+    } catch (err) { detail += `${e.model} : ${err.name === 'TimeoutError' ? 'délai dépassé (' + (Date.now() - t0) + ' ms)' : String(err.message || err)} | `; }
   }
   return json({ error: 'IA indisponible', detail: detail.slice(0, 500) }, 502);
 };
