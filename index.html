@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La serre verrouillée · Du potager sensoriel à la culture autonome</title>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--nuit:#0e2420;--verre:#d6ebe0;--laiton:#c9a24a;--feuille:#6fae7f;--encre:#10231f;--err:#e0735c}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(1200px 600px at 70% -10%,#1d4a3d,var(--nuit));color:var(--verre);font:16px/1.6 'Hanken Grotesk',system-ui,sans-serif}
+h1,h2,h3{font-family:'Young Serif',Georgia,serif;font-weight:400;line-height:1.2;margin:0}
+button,textarea,input{font:inherit}
+:focus-visible{outline:3px solid var(--laiton);outline-offset:2px}
+.wrap{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap}
+header h1{font-size:clamp(1.4rem,4vw,2rem)}
+header p{margin:2px 0 0;opacity:.75;font-size:.9rem}
+.salles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}
+.pane{border:1px solid #ffffff30;border-radius:10px;padding:10px 12px;background:#ffffff0d;backdrop-filter:blur(2px)}
+.pane b{display:block;font-family:'Young Serif',serif;font-weight:400}
+.pane small{opacity:.75}
+.pane.on{border-color:var(--laiton);background:#ffffff1c}
+.pane.ok{background:#6fae7f33;border-color:var(--feuille)}
+.carnet{display:flex;gap:6px;align-items:center}
+.dg{width:34px;height:42px;display:grid;place-items:center;border:2px solid var(--laiton);border-radius:6px;color:var(--laiton);font:1.4rem 'Young Serif',serif}
+.dg.new{animation:pop .7s ease}
+@keyframes pop{0%{transform:scale(.4) rotate(-12deg);opacity:0}60%{transform:scale(1.25)}100%{transform:none;opacity:1}}
+.card{background:var(--verre);color:var(--encre);border-radius:16px;padding:22px}
+.card h2{font-size:1.5rem;margin-bottom:8px}
+.dossier{background:#10231f12;border-left:4px solid var(--laiton);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:.95rem}
+.hist{font-style:italic;opacity:.85}
+.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:11px 14px;border:2px solid #10231f30;border-radius:10px;background:#fff;color:var(--encre);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--encre)}
+.opt.bad{border-color:var(--err);background:#fbe5df}
+.opt.good{border-color:#2f7d4f;background:#dff3e5}
+.btn{margin-top:14px;padding:11px 20px;border:0;border-radius:10px;background:var(--encre);color:var(--verre);font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn.alt{background:transparent;color:var(--encre);border:2px solid var(--encre)}
+textarea,input.code{width:100%;padding:10px 12px;border:2px solid #10231f40;border-radius:10px;background:#fff;color:var(--encre)}
+textarea{min-height:110px;margin-top:10px}
+.fb{white-space:pre-wrap;background:#fff;border-radius:10px;padding:12px 14px;margin-top:12px;border:1px solid #10231f20}
+.note{font-size:.85rem;opacity:.8;margin-top:8px}
+.codes{display:flex;gap:10px;justify-content:center;margin:16px 0}
+.codes input{width:64px;text-align:center;font:1.8rem 'Young Serif',serif;padding:8px}
+.bar{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:560px){.salles{grid-template-columns:1fr}}
+@media print{body{background:#fff;color:#000}header,.salles,.bar,.btn{display:none!important}.card{background:#fff}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>La serre verrouillée</h1>
+      <p>Trois salles, trois énigmes, un code. Parcours solo pour enseignants.</p>
+    </div>
+    <div class="carnet" id="carnet" aria-label="Chiffres découverts"></div>
+  </header>
+  <div class="salles" id="salles"></div>
+  <main class="card" id="scene" aria-live="polite"></main>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CODE = '375';
+const SALLES = [
+  { niv: 'M3', nom: 'La salle des premiers soins', digit: '3',
+    hist: 'La porte de la serre est bloquée. Une plaque indique : « Qui sait soigner une plante sait ouvrir. »',
+    dossier: 'Mission M3 : nommer des végétaux, assurer le soin quotidien des plantes, identifier les conditions de croissance, utiliser « graine », « germer », « pousser ». FMTTN : choisir en autonomie matériel et outils pour entretenir les plantations en respectant les règles de sécurité. Sciences : élaborer un panneau ou cahier sur ce dont un végétal a besoin (eau, lumière, terre).',
+    ep: [
+      { t: 'qcm', q: 'Un élève de M3 arrose seul le bac chaque matin. Quel attendu FMTTN de M3 travaille-t-il ?', o: ['Choisir en autonomie le matériel et les outils pour entretenir les plantations, en sécurité', 'Modéliser une pièce en 3D', 'Rédiger un logigramme'], a: 0, e: 'La modélisation 3D se travaille en S2 et le logigramme en S2-S3. En M3, on entretient en autonomie avec les bons outils.' },
+      { t: 'qcm', q: 'Quel document de synthèse relève des Sciences en M3 ?', o: ['Un graphique évolutif sur la rotation des cultures', 'Un panneau montrant que le végétal a besoin d’eau, de lumière et de terre', 'Un tableur avec formules'], a: 1, e: 'Le graphique et le tableur appartiennent à P5-P6 et S1-S2. En M3, la synthèse est un panneau ou cahier.' },
+      { t: 'libre', q: 'Vous installez un « témoin de soif » (pot non arrosé, bâtonnet planté dans la terre) pour que les élèves décident seuls d’arroser. En 2 ou 3 phrases : que font les élèves et quels attendus travaillent-ils ?',
+        at: 'Les élèves comparent le pot témoin et le bâtonnet, décident d’arroser ou non, et disent les règles de sécurité et d’économie d’eau. Cela travaille le choix autonome des outils, la sécurité et l’identification des besoins du végétal.' }
+    ] },
+  { niv: 'P3-P4', nom: 'L’atelier des mesures', digit: '7',
+    hist: 'Un établi, des balances, des lattes. Un cadenas à lettres demande : « Que mesure-t-on pour comparer ? »',
+    dossier: 'Mission P3-P4 : comparer des substrats (terre, sable, terreau), mesurer température, masse et hauteur, fabriquer des outils simples (tuteurs, contenants gradués). FMTTN : suivre un mode opératoire (verbes d’action + croquis), croquis à main levée, balance, thermomètre, contenant gradué. Avant : en P1-P2, gestes de semis et tri des déchets compostables.',
+    ep: [
+      { t: 'qcm', q: 'Après la comparaison de trois substrats, les élèves présentent leurs résultats. Quel savoir-faire de Mathématiques du palier est visé ?', o: ['Calculer aires et périmètres de parcelles', 'Prélever des informations dans un tableau à double entrée ou un diagramme à bandes', 'Générer un diagramme via un outil numérique'], a: 1, e: 'Les aires et périmètres relèvent de P5-P6, le diagramme par outil numérique de S1-S2.' },
+      { t: 'qcm', q: 'Qu’ont appris vos élèves de P3 juste avant, en P1-P2 ?', o: ['Brancher un capteur', 'Les gestes de semis de base et le tri des déchets compostables', 'Organiser la rotation des cultures sur tableur'], a: 1, e: 'Le capteur arrive en S1, la rotation sur tableur en P5-P6. En P1-P2 : gestes de base et tri.' },
+      { t: 'libre', q: 'Vos élèves fabriquent un gabarit d’espacement des graines (une latte marquée tous les 5 cm). En 2 ou 3 phrases : que font-ils et quels attendus FMTTN et Mathématiques travaillent-ils ?',
+        at: 'Ils mesurent et marquent la latte tous les 5 cm, puis l’utilisent au semis en suivant un mode opératoire. FMTTN : utiliser techniques et outils pour mesurer et tracer, suivre un mode opératoire. Mathématiques : mesurer une longueur avec la latte.' }
+    ] },
+  { niv: 'S3', nom: 'La régie de la serre connectée', digit: '5',
+    hist: 'Les écrans clignotent : une pompe muette, un capteur muet. Le dernier chiffre est derrière le panneau de contrôle.',
+    dossier: 'Mission S3 : gérer en autonomie une mini-serre connectée en programmant les capteurs d’humidité et de température, diagnostiquer les anomalies du végétal et dépanner le système automatisé. FMTTN : énoncer des causes possibles d’anomalies d’un végétal, représenter un système automatisé par un logigramme, diagnostiquer et remédier. Sciences : photosynthèse.',
+    ep: [
+      { t: 'qcm', q: 'La pompe ne se déclenche jamais alors que le sol est sec. Quelle démarche correspond au diagnostic attendu en S3 ?', o: ['Arroser à la main sans chercher la cause', 'Vérifier capteur, seuil programmé et branchement de la pompe, en s’aidant du logigramme', 'Remplacer toute l’installation'], a: 1, e: 'S3 vise le diagnostic méthodique d’un système automatisé : causes possibles, vérification, remède.' },
+      { t: 'qcm', q: 'Quelle notion de Sciences est reliée à la serre en S3 ?', o: ['La production de matière organique par photosynthèse (lumière, eau, CO2)', 'Le tri des déchets compostables', 'La germination de la fève'], a: 0, e: 'Le tri relève de P1-P2 et la germination de M1-M3. En S3 : photosynthèse.' },
+      { t: 'libre', q: 'Vous créez volontairement une panne (capteur débranché, seuil mal codé ou manque de lumière). En 2 ou 3 phrases : quelle consigne donnez-vous et quelle preuve de réussite attendez-vous ?',
+        at: 'Les élèves doivent énoncer des causes possibles de l’anomalie, tester une hypothèse à la fois, puis remédier. Preuve : un logigramme du système, la cause identifiée et la serre de nouveau fonctionnelle. Cela travaille le diagnostic croisé plante et système.' }
+    ] }
+];
+
+let S = { r: 0, s: 0, d: [], ans: {} };
+try { const v = JSON.parse(localStorage.getItem('serre')); if (v) S = v; } catch (e) {}
+const save = () => { try { localStorage.setItem('serre', JSON.stringify(S)); } catch (e) {} };
+const reset = () => { S = { r: 0, s: 0, d: [], ans: {} }; save(); draw(); };
+
+function head(newIdx) {
+  $('carnet').innerHTML = SALLES.map((_, i) => `<span class="dg ${i === newIdx ? 'new' : ''}">${S.d[i] || '?'}</span>`).join('');
+  $('salles').innerHTML = SALLES.map((x, i) =>
+    `<div class="pane ${i < S.r ? 'ok' : i === S.r ? 'on' : ''}"><b>${x.niv}</b><small>${esc(x.nom)}${i < S.r ? ' · ouverte' : ''}</small></div>`).join('');
+}
+
+function draw(newIdx) {
+  head(newIdx);
+  if (S.r >= SALLES.length) return final();
+  const x = SALLES[S.r], n = x.ep.length;
+  if (S.s === 0) {
+    $('scene').innerHTML = `<h2>${esc(x.nom)}</h2><p class="hist">${esc(x.hist)}</p>
+      <div class="dossier"><strong>Dossier de la salle ${esc(x.niv)}.</strong> ${esc(x.dossier)}</div>
+      <p>Lisez-le : les épreuves s’appuient dessus.</p><button class="btn" onclick="S.s=1;save();draw()">Entrer dans la salle</button>`;
+  } else if (S.s <= n) {
+    const e = x.ep[S.s - 1];
+    const bloc = `<p class="note">Épreuve ${S.s} sur ${n} · salle ${esc(x.niv)}</p><h2>${esc(e.q)}</h2>`;
+    if (e.t === 'qcm') {
+      $('scene').innerHTML = bloc + e.o.map((o, i) => `<button class="opt" data-i="${i}">${esc(o)}</button>`).join('') + '<div id="fb"></div>';
+      $('scene').querySelectorAll('.opt').forEach(b => b.onclick = () => repondre(b, e));
+    } else {
+      $('scene').innerHTML = bloc + `<textarea id="rep" maxlength="600" placeholder="Votre réponse…"></textarea>
+        <p class="note">N’indiquez aucun nom d’élève.</p><button class="btn" id="env">Soumettre ma réponse</button><div id="fb"></div>`;
+      $('env').onclick = () => soumettre(x, e);
+    }
+  } else {
+    const k = S.r;
+    $('scene').innerHTML = `<h2>Salle ${esc(x.niv)} ouverte</h2><p>Un panneau s’éclaire et révèle le chiffre <strong>${x.digit}</strong>. Il est noté dans votre carnet en haut de page.</p>
+      <button class="btn" onclick="S.d[${k}]='${x.digit}';S.r++;S.s=0;save();draw(${k})">Passer à la suite</button>`;
+  }
+}
+
+function repondre(b, e) {
+  const i = +b.dataset.i, fb = $('fb');
+  if (i === e.a) {
+    b.classList.add('good');
+    document.querySelectorAll('.opt').forEach(o => o.disabled = true);
+    fb.innerHTML = `<p><strong>Exact.</strong> ${esc(e.e)}</p><button class="btn" onclick="S.s++;save();draw()">Épreuve suivante</button>`;
+  } else {
+    b.classList.add('bad'); b.disabled = true;
+    fb.innerHTML = '<p class="note">Pas tout à fait. Relisez le dossier de la salle et réessayez.</p>';
+  }
+}
+
+async function soumettre(x, e) {
+  const rep = $('rep').value.trim();
+  if (rep.length < 25) { $('fb').innerHTML = '<p class="note">Développez un peu : 2 ou 3 phrases suffisent.</p>'; return; }
+  $('env').disabled = true;
+  $('fb').innerHTML = '<p class="note">Lecture de votre réponse…</p>';
+  let txt, ia = true;
+  try {
+    const r = await fetch('/api/ia', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'feedback', dossier: x.dossier, consigne: e.q, attendu: e.at, reponse: rep }) });
+    const j = await r.json();
+    if (!r.ok || !j.text) throw 0;
+    txt = j.text;
+  } catch (err) { ia = false; }
+  S.ans[S.r + '-' + S.s] = rep; save();
+  $('fb').innerHTML = (ia ? `<div class="fb">${esc(txt)}</div>` : '<p class="note">Retour automatique indisponible : comparez avec la réponse de référence.</p>')
+    + `<div class="fb"><strong>Réponse de référence.</strong> ${esc(e.at)}</div>
+       <button class="btn" onclick="S.s++;save();draw()">Continuer</button>`;
+  $('env').disabled = false;
+}
+
+function final() {
+  $('scene').innerHTML = `<h2>Le cadenas final</h2><p>Saisissez les trois chiffres de votre carnet, dans l’ordre des salles.</p>
+    <div class="codes">${[0, 1, 2].map(i => `<input class="code c" maxlength="1" inputmode="numeric" aria-label="Chiffre ${i + 1}">`).join('')}</div>
+    <div id="fb"></div><button class="btn" id="ouv">Ouvrir la serre</button>`;
+  const cs = [...document.querySelectorAll('.c')];
+  cs.forEach((c, i) => c.oninput = () => { if (c.value && cs[i + 1]) cs[i + 1].focus(); });
+  $('ouv').onclick = () => {
+    if (cs.map(c => c.value).join('') === CODE) ouverte();
+    else $('fb').innerHTML = '<p class="note">Le cadenas résiste. Vérifiez votre carnet.</p>';
+  };
+}
+
+function ouverte() {
+  $('scene').innerHTML = `<h2>La serre est ouverte</h2>
+    <p>Vous avez relié trois paliers du continuum. Dernier défi : transformez cette expérience en séance pour <em>votre</em> classe.</p>
+    <textarea id="sit" maxlength="600" placeholder="Ex. : P4, 22 élèves, un élève Dys, pas de potager, séance de 50 minutes en mars."></textarea>
+    <p class="note">Décrivez la situation sans aucun nom d’élève.</p>
+    <div class="bar"><button class="btn" id="mk">Créer ma mission sur mesure</button><button class="btn alt" onclick="window.print()">Imprimer</button><button class="btn alt" onclick="if(confirm('Recommencer le jeu ?'))reset()">Rejouer</button></div>
+    <div id="fb"></div>`;
+  $('mk').onclick = async () => {
+    const s = $('sit').value.trim();
+    if (s.length < 15) { $('fb').innerHTML = '<p class="note">Décrivez un peu plus votre classe.</p>'; return; }
+    $('mk').disabled = true; $('fb').innerHTML = '<p class="note">Construction de votre mission…</p>';
+    try {
+      const r = await fetch('/api/ia', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'classe', situation: s }) });
+      const j = await r.json(); if (!r.ok || !j.text) throw 0;
+      $('fb').innerHTML = `<div class="fb">${esc(j.text)}</div><p class="note">Contenu généré par IA : relisez-le au regard des référentiels officiels.</p>`;
+    } catch (e) { $('fb').innerHTML = '<p class="note">L’IA est indisponible pour le moment. Réessayez dans un instant.</p>'; }
+    $('mk').disabled = false;
+  };
+}
+draw();
+</script>
+</body>
+</html>
