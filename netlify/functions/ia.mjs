@@ -26,28 +26,37 @@ Situation de classe décrite par l'enseignant : ${cut(b.situation, 600)}
 Construis une mission sur mesure : palier du continuum le plus adapté (et pourquoi), séance en 4 étapes minutées, matériel, un aménagement inclusif, un critère d'évaluation. Maximum 250 mots.`;
   } else return json({ error: 'Mode inconnu' }, 400);
 
+  // Netlify coupe les fonctions vers 10 s : on borne chaque appel pour toujours répondre.
+  const t0 = Date.now();
+  const essais = [
+    { model: 'gemini-2.5-flash', cfg: { thinkingConfig: { thinkingBudget: 0 } }, max: 6500 },
+    { model: 'gemini-flash-latest', cfg: {}, max: 9000 }
+  ];
   let detail = '';
-  for (const model of MODELS) {
+  for (const e of essais) {
+    const reste = 9200 - (Date.now() - t0);
+    if (reste < 1500) break;
     try {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${e.model}:generateContent`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        signal: AbortSignal.timeout(Math.min(e.max, reste)),
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
+          generationConfig: { temperature: 0.4, maxOutputTokens: 700, ...e.cfg }
         })
       });
       const data = await r.json().catch(() => ({}));
       if (r.ok) {
         const t = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
         if (t) return json({ text: t });
-        detail = `${model} : réponse vide (${data.candidates?.[0]?.finishReason || 'inconnue'})`;
+        detail += `${e.model} : réponse vide (${data.candidates?.[0]?.finishReason || 'inconnue'}) | `;
       } else {
-        detail = `${model} : ${r.status} ${data.error?.message || ''}`.slice(0, 300);
+        detail += `${e.model} : ${r.status} ${data.error?.message || ''} | `;
       }
-    } catch (e) { detail = `${model} : ${String(e.message || e)}`.slice(0, 300); }
+    } catch (err) { detail += `${e.model} : ${err.name === 'TimeoutError' ? 'délai dépassé' : String(err.message || err)} | `; }
   }
-  return json({ error: 'IA indisponible', detail }, 502);
+  return json({ error: 'IA indisponible', detail: detail.slice(0, 500) }, 502);
 };
 
 export const config = { path: '/api/ia' };
