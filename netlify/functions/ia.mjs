@@ -1,6 +1,5 @@
 // Netlify Function : la clé GEMINI_API_KEY reste côté serveur (variable d'environnement Netlify).
 // Les prompts sont construits ici : la page ne peut pas servir d'IA généraliste.
-const MODELS = ['gemini-2.5-flash', 'gemini-flash-latest'];
 const cut = (s, n = 700) => String(s || '').slice(0, n);
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -29,8 +28,8 @@ Construis une mission sur mesure : palier du continuum le plus adapté (et pourq
   // Netlify coupe les fonctions vers 10 s : on borne chaque appel pour toujours répondre.
   const t0 = Date.now();
   const essais = [
-    { model: 'gemini-2.5-flash', cfg: { thinkingConfig: { thinkingBudget: 0 } }, max: 6500 },
-    { model: 'gemini-flash-latest', cfg: {}, max: 9000 }
+    { model: 'gemini-3.8-flash', max: 6500 },
+    { model: 'gemini-3.7-flash', max: 9000 }
   ];
   let detail = '';
   for (const e of essais) {
@@ -43,7 +42,7 @@ Construis une mission sur mesure : palier du continuum le plus adapté (et pourq
         signal: AbortSignal.timeout(Math.min(e.max, reste)),
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.4, maxOutputTokens: 700, ...e.cfg }
+          generationConfig: { maxOutputTokens: 1200, thinkingConfig: { thinkingLevel: 'low' } }
         })
       });
       const data = await r.json().catch(() => ({}));
