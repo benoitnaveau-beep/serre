@@ -111,28 +111,37 @@ textarea{resize:vertical;min-height:68px}
 .hist{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
 .hist button{font-size:.8rem;padding:4px 11px;border-radius:99px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
 
-/* Mode Escape Game */
+/* Mode Escape Game Expert (5 salles, 20 épreuves) */
 #view-game{background:radial-gradient(1100px 600px at 70% -10%,#1d4a3d,#0e2420);color:#d6ebe0;min-height:calc(100vh - 130px);padding:28px 0 60px}
-.game-wrap{max-width:840px;margin:0 auto;padding:0 16px}
+.game-wrap{max-width:920px;margin:0 auto;padding:0 16px}
 .g-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
-.carnet{display:flex;gap:8px;align-items:center}
-.dg{width:38px;height:46px;display:grid;place-items:center;border:2px solid var(--gold);border-radius:8px;color:var(--gold);font:700 1.45rem 'Fraunces',serif;background:rgba(0,0,0,.25)}
-.salles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-@media(max-width:600px){.salles{grid-template-columns:1fr}}
-.pane{border:1px solid rgba(255,255,255,.2);border-radius:11px;padding:11px 14px;background:rgba(255,255,255,.06);cursor:pointer;text-align:left;color:#d6ebe0}
-.pane b{display:block;font-family:'Fraunces',serif}
-.pane small{opacity:.8}
-.pane.on{border-color:var(--gold);background:rgba(255,255,255,.14)}
-.pane.ok{background:rgba(111,174,127,.25);border-color:#6fae7f}
+.carnet{display:flex;gap:7px;align-items:center}
+.dg{width:36px;height:44px;display:grid;place-items:center;border:2px solid var(--gold);border-radius:8px;color:var(--gold);font:700 1.35rem 'Fraunces',serif;background:rgba(0,0,0,.25)}
+.salles{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px}
+@media(max-width:780px){.salles{grid-template-columns:repeat(2,1fr)}}
+.pane{border:1px solid rgba(255,255,255,.2);border-radius:11px;padding:10px 12px;background:rgba(255,255,255,.06);cursor:pointer;text-align:left;color:#d6ebe0;transition:.15s}
+.pane:disabled{opacity:.45;cursor:not-allowed}
+.pane b{display:block;font-family:'Fraunces',serif;font-size:.95rem}
+.pane small{opacity:.8;font-size:.78rem;display:block;line-height:1.2;margin-top:2px}
+.pane.on{border-color:var(--gold);background:rgba(255,255,255,.15);box-shadow:0 0 0 2px rgba(197,155,56,.3)}
+.pane.ok{background:rgba(111,174,127,.28);border-color:#6fae7f}
 .g-card{background:#e4f2ea;color:#10231f;border-radius:16px;padding:24px}
+.g-progress{display:flex;gap:6px;margin-bottom:12px}
+.g-step-dot{height:6px;flex:1;border-radius:99px;background:rgba(16,35,31,.15)}
+.g-step-dot.done{background:#2f7d4f}
+.g-step-dot.cur{background:var(--gold)}
 .dossier{background:rgba(16,35,31,.07);border-left:4px solid var(--gold);padding:12px 15px;border-radius:0 10px 10px 0;margin:12px 0;font-size:.94rem}
-.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:11px 14px;border:2px solid rgba(16,35,31,.2);border-radius:10px;background:#fff;color:#10231f;cursor:pointer;font-weight:500}
-.opt:hover:not(:disabled){border-color:#10231f}
+.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:12px 14px;border:2px solid rgba(16,35,31,.2);border-radius:10px;background:#fff;color:#10231f;cursor:pointer;font-weight:500;line-height:1.45}
+.opt:hover:not(:disabled){border-color:#10231f;background:#f7fbf9}
 .opt.bad{border-color:var(--err);background:#fbe5df}
 .opt.good{border-color:#2f7d4f;background:#dff3e5}
+.seq-slot{display:flex;align-items:center;gap:10px;background:#fff;border:2px dashed rgba(16,35,31,.25);border-radius:10px;padding:10px 14px;margin-top:8px;min-height:48px}
+.seq-num{background:#10231f;color:#fff;font-weight:700;border-radius:99px;width:26px;height:26px;display:grid;place-items:center;font-size:.82rem;flex-shrink:0}
 .fb{white-space:pre-wrap;background:#fff;border-radius:10px;padding:14px;margin-top:12px;border:1px solid rgba(16,35,31,.15)}
+.fb.warn-box{border-left:4px solid var(--err);background:#fff8f6}
+.fb.ok-box{border-left:4px solid #2f7d4f;background:#f3fbf5}
 .codes{display:flex;gap:10px;justify-content:center;margin:16px 0}
-.codes input{width:64px;text-align:center;font:700 1.8rem 'Fraunces',serif;padding:8px;border:2px solid #10231f;border-radius:10px;background:#fff;color:#10231f}
+.codes input{width:58px;text-align:center;font:700 1.7rem 'Fraunces',serif;padding:8px;border:2px solid #10231f;border-radius:10px;background:#fff;color:#10231f}
 
 /* ================= MODALE ASSISTANT DE GUIDAGE ================= */
 #assistant-modal{position:fixed;inset:0;background:rgba(10,20,15,0.78);z-index:9999;display:grid;place-items:center;padding:16px;backdrop-filter:blur(4px)}
@@ -178,8 +187,8 @@ textarea{resize:vertical;min-height:68px}
       <button type="button" class="assistant-opt" onclick="fermerAssistant(); changerVue('game');">
         <span>🔐</span>
         <div>
-          <div>2. Jouer le Défi Escape Game « Les 3 Salles du Continuum »</div>
-          <small class="muted" style="font-weight:400">Parcours interactif en 3 salles (M3, P3-P4, S3) avec retour personnalisé par l'IA pour s'approprier les référentiels.</small>
+          <div>2. Relever le Défi Escape Game Expert (5 Salles · 20 Épreuves)</div>
+          <small class="muted" style="font-weight:400">Parcours exigeant réservé aux enseignants : frontières curriculaires, ordonnancement spiralaire, chasse à l'erreur didactique et cas clinique évalué par l'IA.</small>
         </div>
       </button>
 
@@ -237,7 +246,7 @@ textarea{resize:vertical;min-height:68px}
 
     <div id="custom-box" class="hide no-print">
       <strong>✨ Générateur de Continuum sur mesure (M1 à S3)</strong>
-      <p class="muted" style="margin:4px 0">Décrivez votre idée de projet : l'IA construit les 7 paliers FMTTN/Sciences/Maths et adapte l'Escape Game.</p>
+      <p class="muted" style="margin:4px 0">Décrivez votre idée de projet : l'IA construit les 7 paliers FMTTN/Sciences/Maths et génère les 20 épreuves de l'Escape Game associé.</p>
       <div class="custom-row">
         <input type="text" id="custom-input" placeholder="Ex. : Station météo connectée, Atelier vélo-école, Cosmétiques zéro déchet…">
         <button type="button" class="btn pri" id="btn-custom-go" onclick="genererThemeSurMesure()">Construire les 7 paliers avec l'IA</button>
@@ -251,7 +260,7 @@ textarea{resize:vertical;min-height:68px}
   <div class="wrap mode-wrap">
     <div class="tabs" role="tablist">
       <button type="button" class="tab active" id="tab-studio" onclick="changerVue('studio')">📘 Explorateur des 7 Paliers &amp; Générateur de Documents</button>
-      <button type="button" class="tab" id="tab-game" onclick="changerVue('game')">🔐 Escape Game « Les 3 Salles du Continuum »</button>
+      <button type="button" class="tab" id="tab-game" onclick="changerVue('game')">🔐 Escape Game Expert (5 Salles · 20 Épreuves)</button>
     </div>
     <span class="muted" id="badge-theme">Thème actif : Biotope &amp; Potager</span>
   </div>
@@ -373,15 +382,15 @@ textarea{resize:vertical;min-height:68px}
   </div>
 </div>
 
-<!-- ================= VUE 2 : ESCAPE GAME PÉDAGOGIQUE ================= -->
+<!-- ================= VUE 2 : ESCAPE GAME EXPERT (5 SALLES · 20 ÉPREUVES) ================= -->
 <div id="view-game" class="hide">
   <div class="game-wrap">
     <div class="g-head">
       <div>
-        <h2 id="g-title" style="font-size:1.7rem">Défi : Les 3 Salles du Continuum</h2>
-        <p style="margin:4px 0 0;opacity:.82">Explorez les 3 salles clés (M3, P3-P4, S3), récoltez les 3 chiffres du cadenas et débloquez votre séquence.</p>
+        <h2 id="g-title" style="font-size:1.65rem">Parcours d'Expertise : Les 5 Portes du Continuum</h2>
+        <p style="margin:4px 0 0;opacity:.85;font-size:.92rem">5 salles progressives · 4 épreuves méthodologiques par salle (frontières FWB, ordonnancement spiralaire, diagnostic d'erreur et cas clinique IA) · 1 code maître à 5 chiffres.</p>
       </div>
-      <div class="carnet" id="carnet" aria-label="Chiffres découverts"></div>
+      <div class="carnet" id="carnet" aria-label="5 chiffres à récolter"></div>
     </div>
     <div class="salles" id="salles"></div>
     <div class="g-card" id="scene" aria-live="polite"></div>
@@ -397,7 +406,7 @@ const THEMES = {
     id: 'potager', hueBase: 125, nomCourt: 'Biotope & Potager',
     titre: 'Du potager sensoriel à la culture autonome',
     sousTitre: 'Champ FMTTN : Biotope, techniques horticoles, environnement et automatisation (M1 à S3)',
-    code: '375',
+    code: '38745',
     paliers: [
       { id:1, niveau:'M1 - M2', icone:'🌱', titre:'1. Éveil sensoriel et premières manipulations', autonomie:"Accompagnement important de l'adulte",
         avant:"Découverte libre de l'environnement proche et premières explorations sensorielles.",
@@ -476,7 +485,7 @@ const THEMES = {
     id: 'cuisine', hueBase: 28, nomCourt: 'Alimentation & Cuisine',
     titre: 'De la tartine-sourire à la cuisine durable et raisonnée',
     sousTitre: 'Champ FMTTN : Alimentation, hygiène, transformations culinaires et consommation responsable (M1 à S3)',
-    code: '482',
+    code: '46812',
     paliers: [
       { id:1, niveau:'M1 - M2', icone:'🍎', titre:'1. Éveil des papilles, hygiène des mains et premiers gestes', autonomie:"Guidage permanent de l'adulte",
         avant:"Habitudes alimentaires familiales et premières découvertes sensorielles.",
@@ -555,7 +564,7 @@ const THEMES = {
     id: 'materiaux', hueBase: 205, nomCourt: 'Matériaux & FabLab',
     titre: "De l'exploration tactile à l'atelier d'éco-conception",
     sousTitre: 'Champ FMTTN : Matières, façonnage bois/textile/carton, réparation et fabrication numérique (M1 à S3)',
-    code: '619',
+    code: '63194',
     paliers: [
       { id:1, niveau:'M1 - M2', icone:'🧶', titre:'1. Exploration tactile des matières et motricité fine', autonomie:"Accompagnement proche de l'adulte",
         avant:"Manipulations libres d'objets du quotidien.",
@@ -634,7 +643,7 @@ const THEMES = {
     id: 'meca', hueBase: 255, nomCourt: 'Objets techniques & Robotique',
     titre: "De l'objet qu'on manipule au système mécatronique programmé",
     sousTitre: 'Champ FMTTN : Mécanique, électricité, énergies renouvelables, algorithmique et robotique (M1 à S3)',
-    code: '941',
+    code: '92471',
     paliers: [
       { id:1, niveau:'M1 - M2', icone:'🧱', titre:'1. Assemblages libres, équilibre et objets roulants', autonomie:"Exploration accompagnée",
         avant:"Jeux de construction libres.",
@@ -710,60 +719,123 @@ const THEMES = {
   }
 };
 
-/* Génère automatiquement les 3 salles d'Escape Game */
-function construireSallesDepuisPaliers(theme) {
-  const digits = String(theme.code || '375').split('');
-  const pM3 = theme.paliers[1] || theme.paliers[0];
-  const pP3 = theme.paliers[3] || theme.paliers[1];
-  const pS3 = theme.paliers[6] || theme.paliers[theme.paliers.length - 1];
-
-  return [
-    {
-      niv: pM3.niveau, nom: `Salle 1 · ${pM3.titre.replace(/^\d+\.\s*/, '')}`, digit: digits[0] || '3',
-      hist: `Première porte du continuum « ${theme.titre} ». Prouvez votre maîtrise des fondations en maternelle (${pM3.niveau}).`,
-      dossier: `Mission ${pM3.niveau} : ${pM3.pendant} | FMTTN : ${pM3.fmttn} | Sciences : ${pM3.sciences} | Sécurité : ${pM3.securite}`,
-      ep: [
-        { t:'qcm', q:`En ${pM3.niveau}, quel attendu FMTTN est directement travaillé dans cette salle ?`,
-          o:[pM3.fmttn, pS3.fmttn, "Modéliser en 3D avec cotes au dixième de millimètre et formules de tableur"], a:0,
-          e:`Exact ! En ${pM3.niveau}, on vise l'autonomie sur les outils de base et la sécurité immédiate.` },
-        { t:'qcm', q:`Comment les Sciences s'articulent-elles avec la FMTTN à ce palier (${pM3.niveau}) ?`,
-          o:["Par l'algèbre et l'analyse statistique sur tableur", pM3.sciences, "Par le calcul de puissance électrique au multimètre"], a:1,
-          e:`Parfait : l'observation concrète et la synthèse visuelle/sensorielle ancrent le geste technique.` },
-        { t:'libre', q:`Astuce de terrain du palier ${pM3.niveau} : « ${pM3.astuce} ». En 2 ou 3 phrases, décrivez ce que font concrètement vos élèves et quels attendus (FMTTN / sécurité) ils mobilisent.`,
-          at:`Les élèves manipulent le dispositif de manière autonome (${pM3.pendant}), choisissent l'outil adéquat (${pM3.fmttn}) et appliquent les règles de sécurité et d'économie des ressources (${pM3.securite}).` }
-      ]
-    },
-    {
-      niv: pP3.niveau, nom: `Salle 2 · ${pP3.titre.replace(/^\d+\.\s*/, '')}`, digit: digits[1] || '7',
-      hist: `Deuxième porte : le cœur du primaire (${pP3.niveau}), passage du geste guidé à la mesure précise.`,
-      dossier: `Mission ${pP3.niveau} : ${pP3.pendant} | Acquis avant : ${pP3.avant} | FMTTN : ${pP3.fmttn} | Maths/Français : ${pP3.mathsFr}`,
-      ep: [
-        { t:'qcm', q:`Qu'est-ce que les élèves ont construit juste avant ce palier (acquis préalables) ?`,
-          o:["La programmation d'un système automatisé complet avec logigramme", pP3.avant, "La modélisation 3D par extrusion"], a:1,
-          e:`Exact ! Le continuum s'appuie sur les acquis du cycle précédent : ${pP3.avant}` },
-        { t:'qcm', q:`Quel croisement Mathématiques / Français est mobilisé en ${pP3.niveau} ?`,
-          o:[pP3.mathsFr, "L'enfilage de grosses perles selon une couleur", "La critique algébrique de capteurs connectés"], a:0,
-          e:`Tout à fait : la mesure précise, les tableaux/diagrammes et les modes opératoires structurent le palier.` },
-        { t:'libre', q:`Mise en pratique en ${pP3.niveau} : « ${pP3.astuce} ». En 2 ou 3 phrases : quelle consigne donnez-vous aux élèves et comment reliez-vous FMTTN et Mathématiques ?`,
-          at:`Les élèves suivent un mode opératoire et utilisent les instruments de mesure/traçage (${pP3.fmttn}) tout en mobilisant les savoir-faire mathématiques (${pP3.mathsFr}) et la posture sécuritaire (${pP3.securite}).` }
-      ]
-    },
-    {
-      niv: pS3.niveau, nom: `Salle 3 · ${pS3.titre.replace(/^\d+\.\s*/, '')}`, digit: digits[2] || '5',
-      hist: `Dernière porte (${pS3.niveau}) : l'autonomie citoyenne, la régulation technique et le diagnostic critique en fin de Tronc Commun.`,
-      dossier: `Mission ${pS3.niveau} : ${pS3.pendant} | FMTTN : ${pS3.fmttn} | Sciences : ${pS3.sciences} | Sécurité : ${pS3.securite}`,
-      ep: [
-        { t:'qcm', q:`Quelle démarche caractérise l'attendu phare de FMTTN en ${pS3.niveau} ?`,
-          o:["Découvrir les matières par le toucher avec l'adulte", pS3.fmttn, "Trier des objets selon leur couleur"], a:1,
-          e:`Exact : la fin du Tronc Commun (${pS3.niveau}) vise le logigramme, l'autonomie et le diagnostic méthodique des pannes.` },
-        { t:'qcm', q:`Quel attendu scientifique accompagne ce palier ${pS3.niveau} ?`,
-          o:[pS3.sciences, "Reconnaître le sucré et le salé", "Classer des graines par taille"], a:0,
-          e:`Bravo : ce lien scientifique donne tout son sens aux mesures et à la régulation technique.` },
-        { t:'libre', q:`Défi de diagnostic en ${pS3.niveau} : « ${pS3.astuce} ». En 2 ou 3 phrases : quelle démarche attendez-vous des élèves et quelle preuve de réussite validez-vous ?`,
-          at:`Les élèves formulent des hypothèses sur la cause du dysfonctionnement, vérifient méthodiquement le système à l'aide du logigramme et des instruments (${pS3.fmttn}), puis remédient au problème en sécurité (${pS3.securite}).` }
-      ]
-    }
+/* ============================================================================
+   MOTEUR EXPERT DE L'ESCAPE GAME (5 SALLES · 20 ÉPREUVES · ANTI-HASARD)
+   ============================================================================ */
+function creerQcmMelange(q, bonneReponse, distracteurs, explication) {
+  const choix = [
+    { texte: bonneReponse, ok: true },
+    ...distracteurs.map(d => ({ texte: d, ok: false }))
   ];
+  for (let i = choix.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [choix[i], choix[j]] = [choix[j], choix[i]];
+  }
+  return {
+    t: 'qcm',
+    q,
+    o: choix.map(c => c.texte),
+    a: choix.findIndex(c => c.ok),
+    e: explication
+  };
+}
+
+function creerSequenceMelangee(q, paliersSousEnsemble, champ, explication) {
+  const items = paliersSousEnsemble.map((p, idx) => ({
+    id: idx,
+    texte: p[champ],
+    niv: p.niveau
+  }));
+  const melanges = [...items];
+  for (let i = melanges.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [melanges[i], melanges[j]] = [melanges[j], melanges[i]];
+  }
+  return {
+    t: 'seq',
+    q,
+    items: melanges,
+    ordreAttendu: items.map(it => `${it.niv} : ${it.texte}`).join(' → '),
+    e: explication
+  };
+}
+
+/* Construit 5 salles expertes (20 épreuves au total) où les pièges sont tirés des paliers adjacents (N-1 et N+1) */
+function construireSallesDepuisPaliers(theme) {
+  const p = theme.paliers;
+  const codeStr = String(theme.code || '38745').padEnd(5, '5');
+  const digits = codeStr.split('');
+
+  // Configuration des 5 salles sur les indices des 7 paliers : M3 (1), P1-P2 (2), P3-P4 (3), P5-P6 (4), S3 (6)
+  const configs = [
+    { idx: 1, prev: 0, next: 2, alt: 3, seqRange: [0, 1, 2, 3],seqField: 'fmttn',
+      contexte: "Commission d'harmonisation Maternelle → Primaire : plusieurs enseignants confondent l'accompagnement sensoriel de M1-M2, l'autonomie d'entretien en M3 et les premières mesures instrumentées de P1-P2." },
+    { idx: 2, prev: 1, next: 3, alt: 4, seqRange: [1, 2, 3, 4], seqField: 'mathsFr',
+      contexte: "Audit pédagogique du cycle 5-8 / 8-10 : l'équipe doit distinguer rigoureusement l'usage des étalons/lattes en P1-P2 du suivi autonome d'un mode opératoire avec croquis en P3-P4." },
+    { idx: 3, prev: 2, next: 4, alt: 5, seqRange: [2, 3, 4, 5], seqField: 'sciences',
+      contexte: "Cellule d'accompagnement Tronc Commun (P3-P4) : l'enjeu est d'articuler le mode opératoire (verbes d'action + croquis à main levée), l'identification cause/effet et la sécurité ergonomique sans déborder sur le programme de P5-P6." },
+    { idx: 4, prev: 3, next: 5, alt: 6, seqRange: [3, 4, 5, 6], seqField: 'fmttn',
+      contexte: "Charnière Primaire / Secondaire (P5-P6 → S1-S2) : où s'arrête l'encodage sur tableur et le mode opératoire textuel de P6, et où commencent la modélisation 3D, le pied à coulisse et le logigramme conditionnel du secondaire ?" },
+    { idx: 6, prev: 5, next: 4, alt: 3, seqRange: [3, 4, 5, 6], seqField: 'securite',
+      contexte: "Épreuve terminale du Tronc Commun (S1-S2 vs S3) : il ne s'agit plus seulement de brancher un capteur ou d'exécuter une fiche technique (S1-S2), mais d'opérer un diagnostic systémique croisé et d'évaluer l'éthique/durabilité en S3." }
+  ];
+
+  return configs.map((cfg, sIdx) => {
+    const cur = p[cfg.idx];
+    const prv = p[cfg.prev];
+    const nxt = p[cfg.next];
+    const alt = p[cfg.alt];
+    const sousEnsemble = cfg.seqRange.map(i => p[i]);
+
+    return {
+      niv: cur.niveau,
+      nom: `Salle ${sIdx + 1} · ${cur.titre.replace(/^\d+\.\s*/, '')}`,
+      digit: digits[sIdx] || String(sIdx + 3),
+      hist: cfg.contexte,
+      dossier: `Référentiel ciblé : Palier ${cur.niveau} du continuum « ${theme.titre} ». Attention : aucune réponse n'est donnée en clair dans ce briefing. Vous devez mobiliser votre maîtrise fine de la taxonomie FWB (différence entre les paliers ${prv.niveau}, ${cur.niveau} et ${nxt.niveau}), des croisements disciplinaires et de la posture d'accompagnement (${cur.autonomie}).`,
+      ep: [
+        // Épreuve 1 : Frontière curriculaire stricte (N vs N-1 vs N+1 vs Piège productiviste)
+        creerQcmMelange(
+          `[Frontière curriculaire FWB] Vous préparez une séquence en ${cur.niveau} sur « ${theme.titre} ». Parmi ces 4 attendus FMTTN très proches, lequel relève STRICTEMENT du palier ${cur.niveau} (ni de ${prv.niveau}, ni de ${nxt.niveau}) ?`,
+          cur.fmttn,
+          [
+            prv.fmttn,
+            nxt.fmttn,
+            `Faire réaliser l'intégralité du montage technique par l'enseignant pour garantir un objet fini esthétique sans erreur de manipulation.`
+          ],
+          `Analyse curriculaire : En ${cur.niveau}, l'attendu exact est « ${cur.fmttn} ». Les autres propositions relevaient respectivement de ${prv.niveau}, de ${nxt.niveau}, ou d'une dérive productiviste contraire au référentiel.`
+        ),
+
+        // Épreuve 2 : Séquençage spiralaire (4 paliers consécutifs mélangés sans étiquette d'année)
+        creerSequenceMelangee(
+          `[Progression spiralaire] Ces 4 attendus (${cfg.seqField === 'fmttn' ? 'FMTTN' : cfg.seqField === 'sciences' ? 'Sciences' : cfg.seqField === 'mathsFr' ? 'Maths & Français' : 'Sécurité & Durabilité'}) appartiennent aux paliers consécutifs ${sousEnsemble.map(x => x.niveau).join(', ')}. Cliquez dessus dans l'ordre chronologique EXACT du continuum (du plus jeune au plus avancé) :`,
+          sousEnsemble,
+          cfg.seqField,
+          `Progression spiralaire validée : vous avez correctement hiérarchisé la montée en abstraction taxonomique sur les 4 paliers consécutifs.`
+        ),
+
+        // Épreuve 3 : Chasse à l'erreur didactique et interdisciplinaire
+        creerQcmMelange(
+          `[Diagnostic didactique] Un collègue vous soumet sa préparation pour le niveau ${cur.niveau}. Quelle combinaison articule SANS ERREUR DE PALIER la mission de l'année, les Sciences et les Mathématiques/Français de ${cur.niveau} ?`,
+          `Mission : ${cur.pendant} | Sciences : ${cur.sciences} | Maths/Fr : ${cur.mathsFr}`,
+          [
+            `Mission : ${cur.pendant} | Sciences : ${nxt.sciences} | Maths/Fr : ${nxt.mathsFr}`,
+            `Mission : ${prv.pendant} | Sciences : ${cur.sciences} | Maths/Fr : ${prv.mathsFr}`,
+            `Mission : ${alt.pendant} | Sciences : ${prv.sciences} | Maths/Fr : ${nxt.mathsFr}`
+          ],
+          `Cohérence interdisciplinaire : En ${cur.niveau}, le triptyque officiel exige d'aligner « ${cur.pendant} » avec « ${cur.sciences} » et « ${cur.mathsFr} » sans glisser vers ${prv.niveau} ou ${nxt.niveau}.`
+        ),
+
+        // Épreuve 4 : Cas clinique de terrain évalué par l'IA (validation conditionnelle)
+        {
+          t: 'libre',
+          q: `[Cas clinique d'expertise · ${cur.niveau}] Lors de la mise en œuvre de « ${cur.pendant} », vous voulez appliquer l'astuce de terrain (« ${cur.astuce} ») tout en accueillant un élève à besoins spécifiques (Dys/TDAH) et en garantissant la sécurité. Rédigez votre dispositif précis en 3 à 4 phrases en mobilisant explicitement : 1) le geste/outil FMTTN de ${cur.niveau}, 2) l'articulation Sciences ou Maths, 3) la règle de sécurité/ergonomie et l'aménagement inclusif.`,
+          at: `Attendus de correction pour ${cur.niveau} : 1) Mobilisation explicite de l'attendu FMTTN (${cur.fmttn}) et de l'autonomie visée (${cur.autonomie}). 2) Lien concret avec les Sciences (${cur.sciences}) ou Maths/Français (${cur.mathsFr}). 3) Application de la sécurité/durabilité (${cur.securite}) et aménagement raisonnable concret (séquençage visuel, ergonomie du poste, binôme à rôles).`,
+          indice: `Mots-clés attendus dans votre analyse : autonomie (${cur.autonomie}), attendu FMTTN (${cur.fmttn.slice(0, 65)}…), sécurité (${cur.securite.slice(0, 55)}…) + un aménagement Dys/TDAH concret.`
+        }
+      ]
+    };
+  });
 }
 
 /* ============================================================================
@@ -865,7 +937,6 @@ function init() {
     THEMES.custom = savedCustom;
   }
 
-  // Affichage automatique de l'assistant sauf si désactivé par l'utilisateur
   const dejaMasque = store.get('fmttn-masquer-assistant', false);
   $('chk-no-assistant').checked = !!dejaMasque;
   if (!dejaMasque) {
@@ -927,7 +998,7 @@ const TOUR_STEPS = [
   { el: 'themes-bar', title: 'Étape 1/4 · Les 4 Thématiques & le Sur-Mesure', txt: 'Choisissez ici l’un des 4 grands champs du référentiel FMTTN ou cliquez sur « ✨ Créer mon thème sur mesure » pour générer votre propre projet avec l’IA.' },
   { el: 'zone-frise', title: 'Étape 2/4 · La Frise du Continuum (M1 à S3)', txt: 'Cliquez sur un niveau de M1-M2 à S3 : vous voyez immédiatement ce qui est acquis avant, votre mission de l’année et les attendus croisés.' },
   { el: 'zone-generateur', title: 'Étape 3/4 · Le Générateur de Documents IA', txt: 'Choisissez la saison, le lieu et cliquez sur l’un des 4 boutons pour obtenir votre Journal de classe, Fiche de préparation, Aménagements Dys/TDAH ou Tuto.' },
-  { el: 'bar-modes', title: 'Étape 4/4 · Le Défi Escape Game', txt: 'Envie de tester vos connaissances de façon ludique ? Basculez à tout moment vers l’Escape Game des 3 salles grâce à cet onglet !' }
+  { el: 'bar-modes', title: 'Étape 4/4 · L’Escape Game Expert (5 Salles · 20 Épreuves)', txt: 'Testez votre maîtrise didactique avec 5 salles progressives : frontières curriculaires, ordonnancement spiralaire, chasse à l’erreur et cas clinique IA !' }
 ];
 
 function lancerVisiteGuidee() {
@@ -977,7 +1048,7 @@ function activerTheme(key) {
   $('app-title').textContent = th.titre;
   $('app-sub').textContent = th.sousTitre;
   $('badge-theme').textContent = `Thème actif : ${th.nomCourt || th.titre}`;
-  $('g-title').textContent = `Défi Escape Game · ${th.titre}`;
+  $('g-title').textContent = `Escape Game Expert · ${th.titre}`;
 
   $('frise').innerHTML = th.paliers.map((p, i) =>
     `<button type="button" class="pal" style="--ph:${hue(th.hueBase || 125, i, th.paliers.length)}" data-i="${i}" aria-pressed="false">
@@ -1163,7 +1234,7 @@ async function genererThemeSurMesure() {
   }
   const btn = $('btn-custom-go');
   btn.disabled = true;
-  $('custom-status').textContent = `⏳ L'IA construit les 7 paliers (M1 à S3) pour « ${sujet} »…`;
+  $('custom-status').textContent = `⏳ L'IA construit les 7 paliers (M1 à S3) et les 20 épreuves pour « ${sujet} »…`;
 
   try {
     const r = await fetch('/api/ia', {
@@ -1209,7 +1280,7 @@ async function genererThemeSurMesure() {
       id: 'custom', hueBase: 315, nomCourt: `Sur mesure : ${sujet.slice(0, 22)}`,
       titre: `Continuum sur mesure : ${sujet}`,
       sousTitre: `Progression générée sur mesure de M1 à S3 (FMTTN · Sciences · Maths · Français)`,
-      code: '528',
+      code: '58264',
       paliers: paliersConstruits
     };
 
@@ -1223,105 +1294,249 @@ async function genererThemeSurMesure() {
   }
 }
 
+/* ============================================================================
+   GESTION DE L'ESCAPE GAME EXPERT (5 SALLES · 20 ÉPREUVES)
+   ============================================================================ */
 let SALLES_JEU = [];
-let G = { r: 0, s: 0, d: [] };
+let G = { r: 0, s: 0, d: [], maxR: 0, triesLibre: 0 };
+let seqChoix = [];
 
 function initEscapeGame() {
   SALLES_JEU = construireSallesDepuisPaliers(getTheme());
-  G = { r: 0, s: 0, d: [] };
+  G = { r: 0, s: 0, d: [], maxR: 0, triesLibre: 0 };
+  seqChoix = [];
+  drawGame();
+}
+
+function allerSalle(idx) {
+  if (idx > G.maxR) return; // Verrouillage progressif des salles
+  G.r = idx;
+  G.s = 0;
+  G.triesLibre = 0;
+  seqChoix = [];
   drawGame();
 }
 
 function drawGame() {
-  const codeFinal = String(getTheme().code || '375');
-  $('carnet').innerHTML = SALLES_JEU.map((_, i) => `<span class="dg">${G.d[i] || '?'}</span>`).join('');
+  const codeFinal = String(getTheme().code || '38745');
+  $('carnet').innerHTML = SALLES_JEU.map((_, i) => `<span class="dg" title="Chiffre de la Salle ${i + 1}">${G.d[i] || '?'}</span>`).join('');
   $('salles').innerHTML = SALLES_JEU.map((x, i) =>
-    `<button type="button" class="pane ${i < G.r ? 'ok' : i === G.r ? 'on' : ''}" onclick="G.r=${i};G.s=0;drawGame()">
-      <b>${esc(x.niv)}</b><small>${esc(x.nom)}${i < G.r ? ' · ouverte' : ''}</small>
+    `<button type="button" class="pane ${G.d[i] ? 'ok' : i === G.r ? 'on' : ''}" ${i > G.maxR ? 'disabled' : ''} onclick="allerSalle(${i})">
+      <b>${G.d[i] ? '🔓' : i > G.maxR ? '🔒' : '🚪'} Porte ${i + 1} (${esc(x.niv)})</b>
+      <small>${esc(x.nom.replace(/^Salle \d+ · /, ''))}</small>
     </button>`).join('');
 
   if (G.r >= SALLES_JEU.length) return drawCadenasFinal(codeFinal);
   const x = SALLES_JEU[G.r], n = x.ep.length;
 
   if (G.s === 0) {
-    $('scene').innerHTML = `<h2>${esc(x.nom)}</h2><p class="muted">${esc(x.hist)}</p>
-      <div class="dossier"><strong>Dossier de la salle (${esc(x.niv)}) :</strong> ${esc(x.dossier)}</div>
-      <button type="button" class="btn pri" onclick="G.s=1;drawGame()">Entrer dans la salle ${esc(x.niv)}</button>`;
+    $('scene').innerHTML = `<span class="tag" style="margin-bottom:8px">Porte ${G.r + 1} sur ${SALLES_JEU.length} · Focus ${esc(x.niv)}</span>
+      <h2>${esc(x.nom)}</h2>
+      <p style="margin:8px 0">${esc(x.hist)}</p>
+      <div class="dossier"><strong>Briefing méthodologique :</strong> ${esc(x.dossier)}</div>
+      <p class="muted">Vous devrez réussir <strong>4 épreuves sans antisèche</strong> (frontière curriculaire, ordonnancement spiralaire, diagnostic d'erreur didactique et cas clinique évalué par l'IA) pour obtenir le chiffre n°${G.r + 1}.</p>
+      <button type="button" class="btn pri" onclick="G.s=1;G.triesLibre=0;seqChoix=[];drawGame()">Relever les 4 épreuves de la Salle ${G.r + 1} →</button>`;
   } else if (G.s <= n) {
     const e = x.ep[G.s - 1];
-    const entete = `<p class="muted">Épreuve ${G.s} sur ${n} · Salle ${esc(x.niv)}</p><h2 style="margin-bottom:10px">${esc(e.q)}</h2>`;
+    const barreEtapes = `<div class="g-progress">${x.ep.map((_, k) => `<div class="g-step-dot ${k < G.s - 1 ? 'done' : k === G.s - 1 ? 'cur' : ''}"></div>`).join('')}</div>`;
+    const entete = barreEtapes + `<p class="muted" style="margin:0 0 6px">Salle ${G.r + 1} (${esc(x.niv)}) · Épreuve ${G.s} sur ${n}</p><h3 style="font-size:1.22rem;margin-bottom:12px">${esc(e.q)}</h3>`;
+
     if (e.t === 'qcm') {
       $('scene').innerHTML = entete + e.o.map((o, i) => `<button type="button" class="opt" data-i="${i}">${esc(o)}</button>`).join('') + '<div id="g-fb"></div>';
       $('scene').querySelectorAll('.opt').forEach(b => b.onclick = () => repondreQcm(b, e));
+    } else if (e.t === 'seq') {
+      seqChoix = [];
+      renderSeqChallenge(entete, e);
     } else {
       $('scene').innerHTML = entete + `
-        <textarea id="g-rep" maxlength="600" placeholder="Votre réponse en 2 ou 3 phrases (sans aucun nom d'élève)…"></textarea>
+        <textarea id="g-rep" maxlength="800" placeholder="Rédigez votre intervention technopédagogique complète (minimum 3 phrases structurées, sans aucun nom d'élève)…"></textarea>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          <button type="button" class="btn pri" id="g-env">Valider ma réponse avec l'IA</button>
-          <button type="button" class="btn" id="g-aide">💡 Exemple de réponse</button>
+          <button type="button" class="btn pri" id="g-env">Soumettre à l'évaluation du Conseiller IA</button>
+          <button type="button" class="btn" id="g-indice">🔍 Afficher les critères attendus</button>
         </div>
         <div id="g-fb"></div>`;
       $('g-env').onclick = () => soumettreLibre(x, e);
-      $('g-aide').onclick = () => { $('g-rep').value = e.at; };
+      $('g-indice').onclick = () => {
+        $('g-fb').innerHTML = `<div class="fb"><strong>Critères d'évaluation de l'IA :</strong> ${esc(e.indice)}</div>`;
+      };
     }
   } else {
     const k = G.r;
-    $('scene').innerHTML = `<h2>🔓 Salle ${esc(x.niv)} ouverte !</h2>
-      <p>Chiffre obtenu pour le cadenas : <strong>${esc(x.digit)}</strong></p>
-      <button type="button" class="btn pri" onclick="G.d[${k}]='${x.digit}';G.r++;G.s=0;drawGame()">Salle suivante →</button>`;
+    $('scene').innerHTML = `<h2>🔓 Salle ${k + 1} (${esc(x.niv)}) validée avec brio !</h2>
+      <p>Vos 4 épreuves méthodologiques sont validées. Le mécanisme révèle le chiffre n°${k + 1} du cadenas maître : <strong style="font-size:1.5rem;color:#2f7d4f">${esc(x.digit)}</strong></p>
+      <button type="button" class="btn pri" onclick="validerSalle(${k}, '${x.digit}')">${k + 1 < SALLES_JEU.length ? 'Déverrouiller la Salle ' + (k + 2) + ' →' : 'Accéder au Cadenas Maître à 5 chiffres →'}</button>`;
   }
 }
 
+function validerSalle(k, digit) {
+  G.d[k] = digit;
+  G.r = k + 1;
+  if (G.r > G.maxR) G.maxR = G.r;
+  G.s = 0;
+  drawGame();
+}
+
+/* Épreuve de Séquençage Spiralaire (4 attendus à remettre dans l'ordre chronologique) */
+function renderSeqChallenge(entete, e) {
+  const choisisIds = seqChoix.map(c => c.id);
+  const slotsHtml = [0, 1, 2, 3].map(idx => {
+    const item = seqChoix[idx];
+    return `<div class="seq-slot">
+      <span class="seq-num">${idx + 1}</span>
+      <div style="flex:1;font-size:.92rem">${item ? esc(item.texte) : '<span class="muted">Cliquez sur une proposition ci-dessous pour la placer à ce rang…</span>'}</div>
+    </div>`;
+  }).join('');
+
+  const boutonsDispos = e.items.map((it, idx) => {
+    const dejaPris = choisisIds.includes(it.id);
+    return `<button type="button" class="opt seq-btn" data-idx="${idx}" ${dejaPris ? 'disabled style="opacity:.35"' : ''}>${esc(it.texte)}</button>`;
+  }).join('');
+
+  $('scene').innerHTML = entete +
+    `<div id="seq-slots">${slotsHtml}</div>
+     <div style="margin-top:12px"><strong>Propositions à ordonner (du palier le plus jeune au plus avancé) :</strong>${boutonsDispos}</div>
+     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+       <button type="button" class="btn pri" id="seq-val" ${seqChoix.length < 4 ? 'disabled' : ''}>Vérifier l'ordre spiralaire</button>
+       <button type="button" class="btn" id="seq-reset" ${seqChoix.length === 0 ? 'disabled' : ''}>Réinitialiser l'ordre</button>
+     </div>
+     <div id="g-fb"></div>`;
+
+  $('scene').querySelectorAll('.seq-btn').forEach(b => {
+    b.onclick = () => {
+      if (seqChoix.length < 4) {
+        seqChoix.push(e.items[+b.dataset.idx]);
+        renderSeqChallenge(entete, e);
+      }
+    };
+  });
+
+  $('seq-reset').onclick = () => { seqChoix = []; renderSeqChallenge(entete, e); };
+  $('seq-val').onclick = () => verifierSequence(entete, e);
+}
+
+function verifierSequence(entete, e) {
+  const estCorrect = seqChoix.every((it, idx) => it.id === idx);
+  const fb = $('g-fb');
+  if (estCorrect) {
+    $('seq-val').disabled = true;
+    $('seq-reset').disabled = true;
+    fb.innerHTML = `<div class="fb ok-box"><strong>✅ Parfait !</strong> ${esc(e.e)}\n\n<strong>Rappel de la progression :</strong> ${esc(e.ordreAttendu)}</div>
+      <button type="button" class="btn pri" style="margin-top:10px" onclick="G.s++;drawGame()">Épreuve suivante →</button>`;
+  } else {
+    $('seq-val').disabled = true;
+    $('seq-reset').disabled = true;
+    let sec = 8;
+    fb.innerHTML = `<div class="fb warn-box" id="pen-box"><strong>❌ Ordre spiralaire incorrect.</strong> Un enseignant du Tronc Commun repère la progression grâce aux verbes taxonomiques (s'initier → choisir en autonomie → suivre un mode opératoire → planifier/modéliser → diagnostiquer). Réflexion méthodologique : patientez <strong>${sec} s</strong> avant de réessayer…</div>`;
+    const timer = setInterval(() => {
+      sec--;
+      if (sec <= 0) {
+        clearInterval(timer);
+        seqChoix = [];
+        renderSeqChallenge(entete, e);
+      } else {
+        const box = $('pen-box');
+        if (box) box.innerHTML = `<strong>❌ Ordre spiralaire incorrect.</strong> Patientez encore <strong>${sec} s</strong> avant de recomposer la séquence…`;
+      }
+    }, 1000);
+  }
+}
+
+/* QCM avec verrouillage anti-hasard de 8 secondes en cas d'erreur */
 function repondreQcm(b, e) {
   const i = +b.dataset.i, fb = $('g-fb');
+  const tous = [...$('scene').querySelectorAll('.opt')];
   if (i === e.a) {
     b.classList.add('good');
-    $('scene').querySelectorAll('.opt').forEach(o => o.disabled = true);
-    fb.innerHTML = `<div class="fb"><strong>✅ Exact !</strong> ${esc(e.e)}</div><button type="button" class="btn pri" style="margin-top:10px" onclick="G.s++;drawGame()">Épreuve suivante →</button>`;
+    tous.forEach(o => o.disabled = true);
+    fb.innerHTML = `<div class="fb ok-box"><strong>✅ Exact !</strong> ${esc(e.e)}</div>
+      <button type="button" class="btn pri" style="margin-top:10px" onclick="G.s++;drawGame()">Épreuve suivante →</button>`;
   } else {
-    b.classList.add('bad'); b.disabled = true;
-    fb.innerHTML = `<p class="muted" style="margin-top:8px">Pas tout à fait : relisez le dossier de la salle.</p>`;
+    b.classList.add('bad');
+    tous.forEach(o => o.disabled = true);
+    let sec = 8;
+    fb.innerHTML = `<div class="fb warn-box" id="qcm-pen"><strong>❌ Piège curriculaire !</strong> Cette proposition correspond soit à un palier adjacent (inférieur ou supérieur), soit à une erreur didactique. Verrou anti-hasard : analysez votre choix pendant <strong>${sec} s</strong>…</div>`;
+    const timer = setInterval(() => {
+      sec--;
+      if (sec <= 0) {
+        clearInterval(timer);
+        tous.forEach(o => { if (!o.classList.contains('bad')) o.disabled = false; });
+        fb.innerHTML = `<p class="muted" style="margin-top:8px">🔓 Vous pouvez sélectionner une nouvelle proposition.</p>`;
+      } else {
+        const pBox = $('qcm-pen');
+        if (pBox) pBox.innerHTML = `<strong>❌ Piège curriculaire !</strong> Verrou anti-hasard actif : encore <strong>${sec} s</strong>…`;
+      }
+    }, 1000);
   }
 }
 
+/* Évaluation exigeante de la réponse libre par l'IA */
 async function soumettreLibre(x, e) {
   const rep = $('g-rep').value.trim();
-  if (rep.length < 20) { $('g-fb').innerHTML = `<p class="muted" style="margin-top:8px">Développez un peu (2 ou 3 phrases).</p>`; return; }
+  if (rep.length < 75) {
+    $('g-fb').innerHTML = `<div class="fb warn-box">⚠️ Votre réponse est trop courte pour un cas clinique d'enseignant. Rédigez au moins 2 à 3 phrases articulant le geste FMTTN du palier ${esc(x.niv)}, le croisement disciplinaire, la sécurité et l'aménagement inclusif.</div>`;
+    return;
+  }
+  G.triesLibre = (G.triesLibre || 0) + 1;
   $('g-env').disabled = true;
-  $('g-fb').innerHTML = `<p class="muted" style="margin-top:8px">⏳ Analyse par l'IA…</p>`;
-  let txt = '', ok = false;
+  $('g-fb').innerHTML = `<p class="muted" style="margin-top:8px">⏳ Audit technopédagogique de votre réponse par le Conseiller IA…</p>`;
+
+  let txt = '', valideParIA = false;
   try {
     const r = await fetch('/api/ia', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'feedback', dossier: x.dossier, consigne: e.q, attendu: e.at, reponse: rep })
+      body: JSON.stringify({
+        mode: 'feedback',
+        dossier: `Évaluation d'expertise enseignante — Palier ${x.niv}. ${x.dossier}`,
+        consigne: `${e.q} IMPORTANT : Commence OBLIGATOIREMENT ta réponse par le mot VALIDE si l'enseignant mobilise de vrais éléments pédagogiques/techniques cohérents avec le palier ${x.niv}, ou par le mot INSUFFISANT si la réponse est trop vague, banale (ex: d'une personne hors enseignement) ou hors-sujet.`,
+        attendu: e.at,
+        reponse: rep
+      })
     });
     const j = await r.json();
-    if (r.ok && j.text) { txt = j.text; ok = true; }
-  } catch {}
+    if (r.ok && j.text) {
+      txt = j.text.trim();
+      const upper = txt.toUpperCase();
+      valideParIA = !upper.startsWith('INSUFFISANT') && !upper.startsWith('[INSUFFISANT]');
+    } else {
+      valideParIA = true;
+    }
+  } catch {
+    valideParIA = true;
+  }
 
-  $('g-fb').innerHTML = (ok ? `<div class="fb"><strong>Retour du conseiller IA :</strong>\n${esc(txt)}</div>` : '') +
-    `<div class="fb"><strong>Réponse de référence :</strong> ${esc(e.at)}</div><button type="button" class="btn pri" style="margin-top:10px" onclick="G.s++;drawGame()">Continuer →</button>`;
-  $('g-env').disabled = false;
+  // Au bout de 2 essais sérieux, on autorise le passage pour ne jamais bloquer définitivement un participant
+  const autoriserPassage = valideParIA || G.triesLibre >= 2;
+  const cleanTxt = txt.replace(/^\[?(VALIDE|INSUFFISANT)\]?\s*[:\-–]?\s*/i, '');
+
+  if (autoriserPassage) {
+    $('g-fb').innerHTML = `<div class="fb ok-box"><strong>✅ Validation du Conseiller IA (${esc(x.niv)}) :</strong>\n${esc(cleanTxt || 'Analyse technopédagogique pertinente et conforme au palier.')}</div>
+      <div class="fb"><strong>Synthèse de référence :</strong> ${esc(e.at)}</div>
+      <button type="button" class="btn pri" style="margin-top:10px" onclick="G.s++;G.triesLibre=0;drawGame()">Déverrouiller le chiffre de la Salle ${G.r + 1} →</button>`;
+  } else {
+    $('g-fb').innerHTML = `<div class="fb warn-box"><strong>⚠️ Réponse jugée trop générale par le Conseiller IA (Essai 1/2) :</strong>\n${esc(cleanTxt)}\n\n<em>Enrichissez votre réponse ci-dessus avec le vocabulaire spécifique du palier ${esc(x.niv)} (geste technique, sécurité, aménagement) puis cliquez à nouveau sur Soumettre.</em></div>`;
+    $('g-env').disabled = false;
+  }
 }
 
 function drawCadenasFinal(codeFinal) {
-  $('scene').innerHTML = `<h2>🔐 Le cadenas final</h2>
-    <p>Saisissez les 3 chiffres récoltés (${esc(codeFinal)}) :</p>
-    <div class="codes">${[0,1,2].map(i => `<input class="c" maxlength="1" inputmode="numeric" value="${esc(G.d[i] || '')}">`).join('')}</div>
+  const tousObtenus = G.d.filter(Boolean).length === 5;
+  $('scene').innerHTML = `<h2>🔐 Le Cadenas Maître à 5 Chiffres</h2>
+    <p>${tousObtenus ? 'Vous avez triomphé des 20 épreuves ! Saisissez les 5 chiffres inscrits dans votre carnet en haut à droite pour déverrouiller la certification du continuum :' : 'Complétez les 5 salles pour obtenir l’intégralité des 5 chiffres du cadenas maître.'}</p>
+    <div class="codes">${[0,1,2,3,4].map(i => `<input class="c" maxlength="1" inputmode="numeric" value="${esc(G.d[i] || '')}" placeholder="?">`).join('')}</div>
     <div id="g-fb"></div>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button type="button" class="btn pri" id="g-ouv">Ouvrir le cadenas</button>
-      <button type="button" class="btn" onclick="initEscapeGame()">Recommencer le défi</button>
+      <button type="button" class="btn pri" id="g-ouv">Déverrouiller le Continuum</button>
+      <button type="button" class="btn" onclick="initEscapeGame()">Recommencer le parcours complet</button>
     </div>`;
   const cs = [...$('scene').querySelectorAll('.c')];
   cs.forEach((c, i) => c.oninput = () => { if (c.value && cs[i + 1]) cs[i + 1].focus(); });
   $('g-ouv').onclick = () => {
     if (cs.map(c => c.value).join('') === codeFinal) {
-      $('scene').innerHTML = `<h2>🎉 Continuum déverrouillé !</h2>
-        <p>Vous maîtrisez les paliers clés de « <strong>${esc(getTheme().titre)}</strong> ».</p>
-        <button type="button" class="btn pri" onclick="changerVue('studio')">📘 Ouvrir le Studio Documentaire (M1 à S3)</button>`;
+      $('scene').innerHTML = `<h2>🎓 Certification Continuum FMTTN Déverrouillée !</h2>
+        <p>Bravo ! Vous avez démontré une maîtrise experte des 7 paliers (de M1 à S3) sur la thématique « <strong>${esc(getTheme().titre)}</strong> » à travers les 20 épreuves méthodologiques.</p>
+        <button type="button" class="btn pri" onclick="changerVue('studio')">📘 Accéder au Studio Documentaire (M1 à S3)</button>`;
     } else {
-      $('g-fb').innerHTML = `<p class="muted" style="text-align:center">Code incorrect (attendu : ${esc(codeFinal)}).</p>`;
+      $('g-fb').innerHTML = `<div class="fb warn-box" style="text-align:center">Code maître incorrect. Explorez chacune des 5 portes pour récolter les 5 chiffres dans l'ordre.</div>`;
     }
   };
 }
