@@ -23,6 +23,7 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding:18px 0
 .top-row{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .brand h1{font-size:clamp(1.35rem,2.8vw,2rem);color:var(--ac)}
 .brand p{margin:4px 0 0;color:var(--mute);font-size:.92rem}
+.top-actions{display:flex;gap:8px;align-items:center}
 .themes-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .th-btn{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:7px 14px;cursor:pointer;font-weight:600;font-size:.88rem;display:flex;align-items:center;gap:6px;transition:.15s}
 .th-btn:hover{border-color:var(--ac)}
@@ -133,6 +134,18 @@ textarea{resize:vertical;min-height:68px}
 .codes{display:flex;gap:10px;justify-content:center;margin:16px 0}
 .codes input{width:64px;text-align:center;font:700 1.8rem 'Fraunces',serif;padding:8px;border:2px solid #10231f;border-radius:10px;background:#fff;color:#10231f}
 
+/* ================= MODALE ASSISTANT DE GUIDAGE ================= */
+#assistant-modal{position:fixed;inset:0;background:rgba(10,20,15,0.78);z-index:9999;display:grid;place-items:center;padding:16px;backdrop-filter:blur(4px)}
+.assistant-card{background:var(--card);border:2px solid var(--ac);border-radius:20px;max-width:680px;width:100%;padding:28px;box-shadow:0 20px 40px rgba(0,0,0,0.3);position:relative}
+.assistant-card h2{color:var(--ac);font-size:1.6rem;margin-bottom:8px}
+.assistant-card p{color:var(--mute);margin-bottom:20px;line-height:1.6}
+.assistant-options{display:grid;gap:10px;margin-bottom:20px}
+.assistant-opt{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:14px 16px;text-align:left;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:12px;transition:.15s}
+.assistant-opt:hover{border-color:var(--ac);background:var(--acs);transform:translateY(-1px)}
+.assistant-opt span{font-size:1.3rem}
+.assistant-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line);padding-top:14px}
+.assistant-footer label{font-size:.85rem;color:var(--mute);display:flex;align-items:center;gap:6px;cursor:pointer}
+
 @media print{
   header,.mode-bar,.frise-wrap,.acts,.no-print,.nav,.refine-bar{display:none!important}
   body{background:#fff;color:#000}
@@ -143,6 +156,45 @@ textarea{resize:vertical;min-height:68px}
 </head>
 <body>
 
+<!-- ASSISTANT D'ACCUEIL INTELLIGENT -->
+<div id="assistant-modal" class="hide">
+  <div class="assistant-card">
+    <h2>🧭 Bienvenue sur le Studio Continuum FMTTN</h2>
+    <p>Cet assistant vous accompagne pour explorer les référentiels du Tronc Commun (Fédération Wallonie-Bruxelles). Que souhaitez-vous faire aujourd'hui ?</p>
+    
+    <div class="assistant-options">
+      <button class="assistant-opt" onclick="fermerAssistant(true); changerVue('studio');">
+        <span>📘</span>
+        <div>
+          <div>Je veux préparer ma classe rapidement</div>
+          <small class="muted" style="font-weight:400">Accédez directement aux 7 paliers (M1 à S3) et générez vos fiches et journaux de classe en 1 clic.</small>
+        </div>
+      </button>
+
+      <button class="assistant-opt" onclick="fermerAssistant(true); changerVue('game');">
+        <span>🔐</span>
+        <div>
+          <div>Je veux vivre le défi Escape Game pédagogique</div>
+          <small class="muted" style="font-weight:400">Explorez les 3 salles énigmatiques pour tester vos connaissances sur les attendus officiels.</small>
+        </div>
+      </button>
+
+      <button class="assistant-opt" onclick="fermerAssistant(true); lancerVisite Guidee();">
+        <span>✨</span>
+        <div>
+          <div>Fais-moi visiter l'application en 1 minute</div>
+          <small class="muted" style="font-weight:400">Découvrez comment basculer entre les 4 thématiques officielles et utiliser l'IA.</small>
+        </div>
+      </button>
+    </div>
+
+    <div class="assistant-footer">
+      <label><input type="checkbox" id="chk-no-assistant"> Ne plus afficher automatiquement cet assistant</label>
+      <button class="btn pri" onclick="fermerAssistant(false)">Commencer →</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="wrap">
     <div class="top-row">
@@ -150,7 +202,10 @@ textarea{resize:vertical;min-height:68px}
         <h1 id="app-title">Du potager sensoriel à la culture autonome</h1>
         <p id="app-sub">Continuum interdisciplinaire FMTTN, Sciences, Mathématiques &amp; Français (M1 à S3 — FWB)</p>
       </div>
-      <button class="btn no-print" onclick="imprimer(false)">🖨️ Imprimer la page</button>
+      <div class="top-actions no-print">
+        <button class="btn" onclick="ouvrirAssistant()">🧭 Guide / Aide</button>
+        <button class="btn" onclick="imprimer(false)">🖨️ Imprimer</button>
+      </div>
     </div>
 
     <div class="themes-bar no-print" id="themes-bar" aria-label="Choix de la thématique FMTTN">
@@ -163,9 +218,9 @@ textarea{resize:vertical;min-height:68px}
 
     <div id="custom-box" class="hide no-print">
       <strong>✨ Générateur de Continuum sur mesure (M1 à S3)</strong>
-      <p class="muted" style="margin:4px 0">Décrivez votre idée de projet d'école ou de classe : l'IA construit les 7 paliers FMTTN/Sciences/Maths et adapte l'Escape Game.</p>
+      <p class="muted" style="margin:4px 0">Décrivez votre idée de projet : l'IA construit les 7 paliers FMTTN/Sciences/Maths et adapte l'Escape Game.</p>
       <div class="custom-row">
-        <input type="text" id="custom-input" placeholder="Ex. : Créer une station météo connectée, Monter un atelier vélo-école, Fabriquer des cosmétiques zéro déchet…">
+        <input type="text" id="custom-input" placeholder="Ex. : Station météo connectée, Atelier vélo-école, Cosmétiques zéro déchet…">
         <button class="btn pri" id="btn-custom-go" onclick="genererThemeSurMesure()">Construire les 7 paliers avec l'IA</button>
       </div>
       <div id="custom-status" class="muted" style="margin-top:6px"></div>
@@ -179,7 +234,7 @@ textarea{resize:vertical;min-height:68px}
       <button class="tab active" id="tab-studio" onclick="changerVue('studio')">📘 Explorateur des 7 Paliers &amp; Générateur de Documents</button>
       <button class="tab" id="tab-game" onclick="changerVue('game')">🔐 Escape Game « Les 3 Salles du Continuum »</button>
     </div>
-    <span class="muted" id="badge-theme">Thème actif : Biotope &amp; Potager</span>
+    <span class="muted" id="badge-theme"> Thème actif : Biotope &amp; Potager</span>
   </div>
 </div>
 
@@ -211,8 +266,8 @@ textarea{resize:vertical;min-height:68px}
           <h3>Attendus du référentiel (Tronc Commun FWB)</h3>
           <details open><summary>FMTTN (manuel, technique, technologique, numérique)</summary><p id="r-fmttn"></p></details>
           <details open><summary>Croisement Sciences</summary><p id="r-sci"></p></details>
-          <details><summary>Croisement Mathématiques et Français</summary><p id="r-mf"></p></details>
-          <details><summary>Sécurité, ergonomie et développement durable</summary><p id="r-sec"></p></details>
+          <details open><summary>Croisement Mathématiques et Français</summary><p id="r-mf"></p></details>
+          <details open><summary>Sécurité, ergonomie et développement durable</summary><p id="r-sec"></p></details>
         </section>
 
         <section class="card">
@@ -288,7 +343,6 @@ textarea{resize:vertical;min-height:68px}
         </div>
         <div class="out" id="r-out"></div>
 
-        <!-- Barre d'évolution au fil des demandes du participant -->
         <div class="refine-bar no-print">
           <input type="text" class="txt" id="refine-in" placeholder="Faire évoluer ce document (ex. : Ajoute une variante sans matériel numérique, détaille l'étape 2, adapte pour 28 élèves…)">
           <button class="btn pri" id="b-refine" onclick="affinerDocument()">✨ Adapter avec l'IA</button>
@@ -321,9 +375,7 @@ textarea{resize:vertical;min-height:68px}
    ============================================================================ */
 const THEMES = {
   potager: {
-    id: 'potager',
-    hueBase: 125,
-    nomCourt: 'Biotope & Potager',
+    id: 'potager', hueBase: 125, nomCourt: 'Biotope & Potager',
     titre: 'Du potager sensoriel à la culture autonome',
     sousTitre: 'Champ FMTTN : Biotope, techniques horticoles, environnement et automatisation (M1 à S3)',
     code: '375',
@@ -402,9 +454,7 @@ const THEMES = {
   },
 
   cuisine: {
-    id: 'cuisine',
-    hueBase: 28,
-    nomCourt: 'Alimentation & Cuisine durable',
+    id: 'cuisine', hueBase: 28, nomCourt: 'Alimentation & Cuisine',
     titre: 'De la tartine-sourire à la cuisine durable et raisonnée',
     sousTitre: 'Champ FMTTN : Alimentation, hygiène, transformations culinaires et consommation responsable (M1 à S3)',
     code: '482',
@@ -413,239 +463,235 @@ const THEMES = {
         avant:"Habitudes alimentaires familiales et premières découvertes sensorielles.",
         pendant:"Se laver les mains selon un rituel illustré, explorer les fruits et légumes par les 5 sens, tartiner et couper des aliments mous avec un couteau à bout rond.",
         apres:"En M3, les élèves suivront une fiche-recette illustrée en autonomie partielle et trieront les épluchures.",
-        fmttn:"S'initier aux règles d'hygiène corporelle avant une manipulation culinaire et tenir adéquatement un ustensile simple (tartineur, couteau de table).",
-        sciences:"Identifier les organes des sens sollicités lors de la dégustation (sucré, salé, acide, croquant, mou).",
-        mathsFr:"Maths : Trier et classer des aliments selon leur couleur ou forme. Français : Nommer les fruits, légumes et ustensiles courants.",
-        securite:"Rester assis lors de l'utilisation d'un ustensile et respecter l'hygiène du poste de travail.",
-        materiel:["Savon, essuie-mains et affiche séquentielle de lavage","Couteaux à bout rond ergonomiques et planches antidérapantes","Fruits de saison tendres (banane, poire) et fromage frais","Bols de tri"],
-        astuce:"Utilisez une chanson ou un sablier visuel de 30 secondes pour ancrer le rituel du lavage des mains avant chaque atelier." },
+        fmttn:"S'initier aux règles d'hygiène corporelle avant une manipulation culinaire et tenir adéquatement un ustensile simple.",
+        sciences:"Identifier les organes des sens sollicités lors de la dégustation.",
+        mathsFr:"Maths : Trier et classer des aliments. Français : Nommer les fruits, légumes et ustensiles courants.",
+        securite:"Rester assis lors de l'utilisation d'un ustensile et respecter l'hygiène du poste.",
+        materiel:["Savon et essuie-mains","Couteaux à bout rond ergonomiques","Fruits de saison tendres","Bols de tri"],
+        astuce:"Utilisez un sablier visuel de 30 secondes pour ancrer le rituel du lavage des mains." },
       { id:2, niveau:'M3', icone:'🥗', titre:'2. Recette illustrée en séquence et zéro gaspillage', autonomie:"Suivi d'un référentiel visuel pas à pas",
-        avant:"En M1-M2, les élèves ont découvert le lavage des mains et les gestes simples de tartinage et découpe.",
-        pendant:"Préparer une salade de fruits ou une soupe collective en lisant une recette en pictogrammes, choisir le bon ustensile (économe adapté, presse-agrumes) et composter les épluchures.",
+        avant:"En M1-M2, les élèves ont découvert l'hygiène et les gestes simples de découpe.",
+        pendant:"Préparer une salade de fruits en lisant une recette en pictogrammes, choisir le bon ustensile et composter les épluchures.",
         apres:"En P1-P2, ils mesureront les ingrédients avec des étalons puis des contenants gradués.",
-        fmttn:"Choisir en autonomie l'ustensile adéquat pour presser, mélanger ou couper, et nettoyer son espace après l'activité.",
-        sciences:"Distinguer l'origine végétale ou animale des aliments utilisés dans la recette.",
-        mathsFr:"Maths : Dénombrer les ingrédients et lire un tableau de répartition des tâches. Français : Remettre dans l'ordre chronologique les images de la recette.",
-        securite:"Tenir les aliments en « pont » ou en « griffe » pour protéger ses doigts et ne pas gaspiller l'eau de rinçage.",
-        materiel:["Fiche-recette géante en pictogrammes","Presse-agrumes manuels, coupe-pommes, saladiers","Tabliers et charlottes","Bio-seau pour les épluchures"],
-        astuce:"La technique du « pont » (former un pont avec sa main au-dessus du fruit pour passer la lame dessous) sécurise immédiatement la découpe en M3." },
-      { id:3, niveau:'P1 - P2', icone:'🥄', titre:'3. Mesures culinaires par étalons et groupes alimentaires', autonomie:"Travail en binômes avec contrôle de l'enseignant",
-        avant:"En M3, les élèves ont suivi une recette illustrée et manipulé les ustensiles de base en sécurité.",
-        pendant:"Réaliser une préparation sans cuisson ou à cuisson simple (compote, pain, biscuits) en mesurant avec des unités non conventionnelles (verre, cuillère) puis en grammes/décilitres.",
-        apres:"En P3-P4, ils utiliseront balances de précision, thermomètres et compareront les modes de conservation.",
-        fmttn:"Utiliser des instruments de mesure de capacité et de masse simples, suivre l'ordre des opérations et trier les emballages.",
-        sciences:"Classer les ingrédients selon la pyramide alimentaire et identifier le rôle de l'alimentation sur la santé.",
-        mathsFr:"Maths : Mesurer des masses et capacités (étalons puis g / cl / dl). Français : Lire une liste d'ingrédients et d'ustensiles et repérer les verbes d'action.",
-        securite:"Identifier les zones chaudes, utiliser des maniques et maintenir son plan de travail propre.",
-        materiel:["Verres doseurs, cuillères mesures, balances mécaniques/électroniques","Ingrédients locaux de saison","Fiches-recettes combinant texte court et croquis","Bacs de tri sélectif (PMC, papier, organique)"],
-        astuce:"Faites d'abord mesurer la farine en « verres » par deux groupes différents pour montrer pourquoi la pesée en grammes sur la balance est indispensable !" },
-      { id:4, niveau:'P3 - P4', icone:'⚖️', titre:'4. Transformations culinaires, conservation et lecture d’étiquettes', autonomie:"Exécution autonome d'un mode opératoire illustré",
-        avant:"En P1-P2, les élèves ont découvert les pesées simples et le tri des emballages.",
-        pendant:"Réaliser une recette impliquant un changement d'état ou une levée (pâte levée, beurre maison, confiture), comparer des modes de conservation et décoder une étiquette alimentaire.",
-        apres:"En P5-P6, ils adapteront les quantités par proportionnalité et calculeront le coût et la saisonnalité d'un menu sur tableur.",
-        fmttn:"Suivre un mode opératoire précis (temps, température, masse), utiliser batteur, balance et thermomètre culinaire en respectant l'ergonomie.",
-        sciences:"Observer le rôle des micro-organismes utiles (levure dans le pain, ferments du yaourt) et les techniques de conservation (froid, séchage, sel/sucre).",
-        mathsFr:"Maths : Convertir des unités de masse (g/kg) et de capacité (ml/cl/l), lire un tableau nutritionnel. Français : Rédiger ou réécrire une recette claire à l'infinitif ou à l'impératif.",
-        securite:"Adopter la bonne posture debout au plan de travail, respecter la chaîne du froid et les dates de péremption (DLC vs DDM).",
-        materiel:["Balances électroniques au gramme, verres gradués en ml","Levure boulangère, farine, bocaux de conservation","Étiquettes d'emballages alimentaires variés","Thermomètre de cuisine"],
-        astuce:"Comparer la fabrication d'une compote maison (3 ingrédients) avec l'étiquette d'une compote industrielle développe immédiatement l'esprit critique." },
+        fmttn:"Choisir en autonomie l'ustensile adéquat et nettoyer son espace après l'activité.",
+        sciences:"Distinguer l'origine végétale ou animale des aliments.",
+        mathsFr:"Maths : Dénombrer les ingrédients et lire un tableau de répartition. Français : Remettre dans l'ordre chronologique les images de la recette.",
+        securite:"Tenir les aliments en « griffe » pour protéger ses doigts.",
+        materiel:["Fiche-recette en pictogrammes","Presse-agrumes, saladiers","Bio-seau pour compost"],
+        astuce:"La technique de la « griffe » sécurise immédiatement la découpe en M3." },
+      { id:3, niveau:'P1 - P2', icone:'🥄', titre:'3. Mesures culinaires par étalons et groupes alimentaires', autonomie:"Travail en binômes avec contrôle",
+        avant:"En M3, les élèves ont suivi une recette illustrée et manipulé les ustensiles de base.",
+        pendant:"Réaliser une préparation simple en mesurant avec des unités non conventionnelles puis en grammes/décilitres.",
+        apres:"En P3-P4, ils utiliseront balances de précision et thermomètres.",
+        fmttn:"Utiliser des instruments de mesure de capacité et de masse simples, suivre l'ordre des opérations.",
+        sciences:"Classer les ingrédients selon la pyramide alimentaire.",
+        mathsFr:"Maths : Mesurer des masses et capacités (g / cl / dl). Français : Lire une liste d'ingrédients et repérer les verbes d'action.",
+        securite:"Identifier les zones chaudes et maintenir son plan de travail propre.",
+        materiel:["Verres doseurs, cuillères mesures, balances","Ingrédients locaux de saison","Bacs de tri sélectif"],
+        astuce:"Faites mesurer la farine en verres par deux groupes pour montrer pourquoi la pesée en grammes est indispensable !" },
+      { id:4, niveau:'P3 - P4', icone:'⚖️', titre:'4. Transformations culinaires, conservation et étiquettes', autonomie:"Exécution autonome d'un mode opératoire",
+        avant:"En P1-P2, les élèves ont découvert les pesées simples et le tri.",
+        pendant:"Réaliser une recette impliquant un changement d'état (pâte levée, confiture), comparer des modes de conservation et décoder une étiquette.",
+        apres:"En P5-P6, ils adapteront les quantités par proportionnalité.",
+        fmttn:"Suivre un mode opératoire précis (temps, température, masse) et utiliser batteur et balance.",
+        sciences:"Observer le rôle des micro-organismes utiles (levure) et les techniques de conservation.",
+        mathsFr:"Maths : Convertir des unités (g/kg, ml/cl/l), lire un tableau nutritionnel. Français : Rédiger ou réécrire une recette à l'infinitif.",
+        securite:"Respecter la chaîne du froid et les dates de péremption.",
+        materiel:["Balances électroniques","Levure boulangère, bocaux","Étiquettes alimentaires"],
+        astuce:"Comparer une compote maison avec une compote industrielle développe l'esprit critique." },
       { id:5, niveau:'P5 - P6', icone:'📊', titre:'5. Proportionnalité, budget et saisonnalité sur tableur', autonomie:"Planification d'équipe et gestion numérique",
-        avant:"En P3-P4, les élèves ont maîtrisé les pesées, conversions et principes de conservation.",
-        pendant:"Adapter une recette de 4 à 24 personnes, planifier une collation collective locale et zéro déchet, et calculer son prix de revient sur un tableur.",
-        apres:"En S1-S2, ils analyseront les réactions physico-chimiques de cuisson et concevront des emballages ou ustensiles durables.",
-        fmttn:"Planifier les étapes de production en équipe, utiliser un tableur pour gérer les quantités/coûts et appliquer les règles strictes d'hygiène et de tri.",
-        sciences:"Relier l'alimentation aux besoins énergétiques du corps humain et analyser l'impact du transport des aliments (circuit court vs importé).",
-        mathsFr:"Maths : Résoudre des problèmes de proportionnalité (règle de trois sur les ingrédients) et calculer un coût unitaire. Français : Rédiger une affiche de sensibilisation contre le gaspillage alimentaire.",
-        securite:"Gérer en sécurité la découpe précise, la cuisson sur plaque et le nettoyage écologique des ustensiles.",
-        materiel:["Ordinateurs/tablettes avec tableur","Calendrier des fruits et légumes de saison en Belgique"," Mercuriale des prix (catalogues ou relevés en magasin)","Matériel de cuisson de classe"],
-        astuce:"Demandez aux élèves de calculer sur tableur le coût d'un goûter fait maison comparé aux biscuits emballés individuellement (coût au kilo et poids des déchets)." },
-      { id:6, niveau:'S1 - S2', icone:'🔬', titre:'6. Physico-chimie culinaire, ergonomie et éco-conception', autonomie:"Expérimentation méthodique et justification durable",
-        avant:"En P5-P6, les élèves ont adapté des recettes par proportionnalité et calculé un budget sur tableur.",
-        pendant:"Expérimenter les émulsions et cuissons économes (cuisson passive, bain-marie), modéliser en 3D un emporte-pièce ou doseur sur mesure et auditer le gaspillage de la cantine.",
-        apres:"En S3, ils concevront un menu complet équilibré et automatiseront le contrôle de température ou d'hygiène.",
-        fmttn:"S1 : Maîtriser les techniques de coupe et de cuisson en justifiant le choix des équipements. S2 : Modéliser un ustensile/gabarit en 3D (qualité alimentaire) et traiter des données d'enquête sur tableur.",
-        sciences:"Analyser les mélanges homogènes/hétérogènes, les émulsions (mayonnaise, vinaigrette) et les transferts thermiques lors de la cuisson.",
-        mathsFr:"Maths : Statistiques (pourcentages de pertes à l'épluchage, graphiques d'apports nutritionnels). Français : Rédiger un dossier argumenté pour améliorer la durabilité des repas scolaires.",
-        securite:"Prévention des risques électriques et thermiques, marche en avant (hygiène HACCP simplifiée) et ergonomie du poste.",
-        materiel:["Plaques à induction, sondes thermiques, balances de précision","Logiciel CAO 3D pour emporte-pièce/doseur","Tableur avec formules de calcul nutritionnel","Ingrédients de test (huile, eau, lécithine/jaune d'œuf)"],
-        astuce:"Tester la « cuisson passive » des pâtes (couper la plaque après 2 minutes d'ébullition et couvrir) permet de mesurer au wattmètre l'énergie économisée !" },
-      { id:7, niveau:'S3', icone:'🌡️', titre:'7. Menu durable, contrôle connecté et diagnostic sanitaire', autonomie:"Conception globale, régulation et esprit critique",
-        avant:"En S1-S2, les élèves ont étudié les transformations physico-chimiques et la consommation énergétique.",
-        pendant:"Concevoir et produire un repas équilibré à faible empreinte carbone, programmer une alerte de température (chaîne du froid / étuve à yaourt connectée) et diagnostiquer un défaut de préparation.",
-        apres:"Fin du Tronc Commun : autonomie citoyenne complète en alimentation saine, budget et technologie domestique.",
-        fmttn:"Élaborer un logigramme de régulation thermique (étuve ou frigo connecté), diagnostiquer une anomalie culinaire ou sanitaire et y remédier.",
-        sciences:"Relier la respiration cellulaire et la fermentation aux conditions de température et de pH ; analyser le bilan carbone d'un menu.",
-        mathsFr:"Maths : Modéliser une courbe de croissance bactérienne ou de refroidissement et optimiser un budget sous contraintes. Français : Présenter et défendre oralement et par écrit une charte alimentaire durable.",
-        securite:"Maîtrise complète des normes d'hygiène alimentaire, sécurité électrique et analyse critique des additifs et produits ultra-transformés.",
-        materiel:["Microcontrôleur + sonde de température étanche DS18B20","Yaourtière ou étuve expérimentale","Base de données carbone des aliments (Agribalyse)","Poste de cuisine complet"],
-        astuce:"Programmer une sonde Micro:bit qui déclenche une alerte sonore si la température d'un plat préparé reste entre 10 °C et 60 °C (zone de danger bactérien) concrétise parfaitement le référentiel S3." }
+        avant:"En P3-P4, les élèves ont maîtrisé pesées et conservation.",
+        pendant:"Adapter une recette de 4 à 24 personnes, planifier une collation locale zéro déchet et calculer son prix sur tableur.",
+        apres:"En S1-S2, ils analyseront les réactions physico-chimiques de cuisson.",
+        fmttn:"Planifier les étapes en équipe, utiliser un tableur et appliquer les règles d'hygiène.",
+        sciences:"Relier l'alimentation aux besoins énergétiques et circuit court vs importé.",
+        mathsFr:"Maths : Proportionnalité (règle de trois) et coût unitaire. Français : Rédiger une affiche contre le gaspillage.",
+        securite:"Gérer découpe précise, cuisson sur plaque et nettoyage écologique.",
+        materiel:["Tablettes/PC avec tableur","Calendrier des fruits/légumes de saison","Mercuriale des prix"],
+        astuce:"Calculer sur tableur le coût d'un goûter maison comparé aux biscuits emballés." },
+      { id:6, niveau:'S1 - S2', icone:'🔬', titre:'6. Physico-chimie culinaire, ergonomie et éco-conception', autonomie:"Expérimentation méthodique",
+        avant:"En P5-P6, les élèves ont adapté des recettes et calculé un budget.",
+        pendant:"Expérimenter émulsions et cuissons économes, modéliser en 3D un emporte-pièce sur mesure et auditer le gaspillage.",
+        apres:"En S3, ils concevront un menu complet équilibré.",
+        fmttn:"Maîtriser coupes et cuissons, modéliser un ustensile en 3D (qualité alimentaire) et traiter des données.",
+        sciences:"Analyser mélanges, émulsions (mayonnaise) et transferts thermiques.",
+        mathsFr:"Maths : Statistiques (pertes à l'épluchage, graphiques nutritionnels). Français : Dossier argumenté pour la cantine.",
+        securite:"Prévention des risques électriques et thermiques, marche en avant.",
+        materiel:["Plaques induction, sondes thermiques","Logiciel CAO 3D (emporte-pièce)"],
+        astuce:"Tester la « cuisson passive » des pâtes pour mesurer l'énergie économisée au wattmètre." },
+      { id:7, niveau:'S3', icone:'🌡️', titre:'7. Menu durable, contrôle connecté et diagnostic sanitaire', autonomie:"Conception globale et régulation",
+        avant:"En S1-S2, les élèves ont étudié transformations et énergie.",
+        pendant:"Concevoir un repas à faible empreinte carbone, programmer une alerte de température (chaîne du froid / étuve connectée) et diagnostiquer un défaut.",
+        apres:"Fin du Tronc Commun : autonomie citoyenne complète en alimentation.",
+        fmttn:"Élaborer un logigramme de régulation thermique et diagnostiquer une anomalie sanitaire.",
+        sciences:"Relier respiration/fermentation aux conditions de température et pH.",
+        mathsFr:"Maths : Courbes de refroidissement et optimisation budgétaire. Français : Défendre une charte alimentaire durable.",
+        securite:"Maîtrise des normes HACCP et esprit critique sur l'ultra-transformé.",
+        materiel:["Microcontrôleur + sonde DS18B20","Base de données carbone Agribalyse"],
+        astuce:"Programmer une alerte Micro:bit si un plat reste entre 10°C et 60°C (zone de danger bactérien)." }
     ]
   },
 
   materiaux: {
-    id: 'materiaux',
-    hueBase: 205,
-    nomCourt: 'Matériaux, Bois, Textile & FabLab',
+    id: 'materiaux', hueBase: 205, nomCourt: 'Matériaux & FabLab',
     titre: "De l'exploration tactile à l'atelier d'éco-conception",
     sousTitre: 'Champ FMTTN : Matières, façonnage bois/textile/carton, réparation et fabrication numérique (M1 à S3)',
     code: '619',
     paliers: [
-      { id:1, niveau:'M1 - M2', icone:'🧶', titre:'1. Exploration tactile des matières et gestes moteurs', autonomie:"Accompagnement proche de l'adulte",
+      { id:1, niveau:'M1 - M2', icone:'🧶', titre:'1. Exploration tactile des matières et motricité fine', autonomie:"Accompagnement proche de l'adulte",
         avant:"Manipulations libres d'objets du quotidien.",
-        pendant:"Toucher et nommer différentes matières (bois, tissu, papier, laine, métal), déchirer, froisser, plier, enfiler de grosses perles et coller.",
-        apres:"En M3, les élèves utiliseront les ciseaux avec précision et assembleront deux matériaux différents.",
-        fmttn:"Exercer sa motricité fine par des gestes de pliage, laçage et collage en choisissant l'outil ou le consommable adapté.",
-        sciences:"Découvrir les propriétés sensorielles des matériaux (doux, rugueux, dur, souple, transparent, opaque).",
-        mathsFr:"Maths : Trier des échantillons de matières selon un critère et réaliser un algorithme d'enfilage. Français : Verbaliser ses actions (plier, découper, coller).",
-        securite:"Tenir et transporter une paire de ciseaux à bouts ronds en sécurité.",
-        materiel:["Boîte à trésors de chutes de tissus, bois poncé, feutrine, carton ondulé","Ciseaux à bouts ronds et colle sans solvant","Cartes de laçage perforées et gros lacets"],
-        astuce:"Créez un « mur tactile » ou mémory des matières les yeux bandés pour enrichir le vocabulaire précis avant toute fabrication." },
+        pendant:"Toucher et nommer différentes matières, déchirer, froisser, plier, enfiler de grosses perles et coller.",
+        apres:"En M3, les élèves utiliseront les ciseaux avec précision et assembleront deux matériaux.",
+        fmttn:"Exercer sa motricité fine par pliage, laçage et collage.",
+        sciences:"Découvrir les propriétés sensorielles des matières (doux, rugueux, dur, souple).",
+        mathsFr:"Maths : Trier des échantillons et algorithme d'enfilage. Français : Verbaliser ses actions.",
+        securite:"Transporter une paire de ciseaux à bouts ronds en sécurité.",
+        materiel:["Chutes de tissu, bois poncé, feutrine","Ciseaux à bouts ronds et colle","Cartes de laçage"],
+        astuce:"Créez un mémory tactile les yeux bandés pour enrichir le vocabulaire." },
       { id:2, niveau:'M3', icone:'✂️', titre:'2. Découpe sur tracé et premiers assemblages', autonomie:"Autonomie sur le poste de bricolage",
-        avant:"En M1-M2, les élèves ont exploré les textures et acquis les premiers gestes de pliage et collage.",
-        pendant:"Découper en suivant une ligne droite ou courbe, perforer, relier par attache parisienne ou couture gros chas sur canevas/carton perforé.",
-        apres:"En P1-P2, ils mesureront à la latte avant de tracer et découperont des matériaux plus rigides.",
-        fmttn:"Choisir le mode d'assemblage approprié (colle, attache parisienne, fil) selon les matériaux à réunir.",
-        sciences:"Tester la résistance à l'eau (perméable / imperméable) de différents matériaux pour habiller une mascotte.",
-        mathsFr:"Maths : Reconnaître et assembler des formes géométriques (carré, rectangle, triangle, disque). Français : Suivre une fiche de fabrication en 3 étapes illustrées.",
-        securite:"Ranger les outils tranchants ou pointus immédiatement après usage et économiser le papier en découpant au bord de la feuille.",
-        materiel:["Ciseaux ergonomiques, perforatrices, attaches parisiennes","Aiguilles à bout rond en plastique et laine","Chutes de bâche, tissu, papier journal, carton"],
-        astuce:"Apprenez la règle de l'atelier écoresponsable dès la M3 : « On ne découpe jamais au milieu d'une feuille neuve, on part toujours du bord ! »" },
-      { id:3, niveau:'P1 - P2', icone:'📐', titre:'3. Mesurer, tracer et assembler par récupération', autonomie:"Suivi d'étapes guidées avec contrôle du traçage",
-        avant:"En M3, les élèves ont appris à découper sur une ligne et à assembler par collage ou laçage.",
-        pendant:"Mesurer et tracer à la latte sur carton ou feutrine, poncer une pièce de bois tendre et fabriquer un objet utilitaire à partir de matériaux de récupération.",
-        apres:"En P3-P4, ils utiliseront l'équerre, la scie à dos avec boîte à onglets et coudront un bouton ou un point simple.",
-        fmttn:"Utiliser la latte pour mesurer et tracer avant de découper, et trier les chutes réutilisables, recyclables et non recyclables.",
-        sciences:"Identifier l'origine des matériaux courants (bois/forêt, coton/plante, laine/mouton, plastique/pétrole).",
-        mathsFr:"Maths : Tracer des segments de longueur donnée en cm et repérer le milieu. Français : Lire la liste du matériel et les verbes d'action d'un tutoriel.",
-        securite:"Maintenir fermement la pièce lors du ponçage ou de la découpe et porter attention à la poussière.",
-        materiel:["Lattes graduées en cm, crayons de charpentier/mine","Papier abrasif (grain moyen et fin) et cales à poncer","Boîtes en carton, rouleaux, chutes de feutrine"],
-        astuce:"Règle d'or de l'atelier FMTTN à afficher au tableau : « Je mesure deux fois, je trace une fois, je fais valider, puis je coupe ! »" },
-      { id:4, niveau:'P3 - P4', icone:'🪡', titre:'4. Croquis coté, couture de base et travail du bois tendre', autonomie:"Exécution d'un mode opératoire illustré en sécurité",
-        avant:"En P1-P2, les élèves ont appris à mesurer à la latte et à poncer/assembler des matériaux simples.",
-        pendant:"Réaliser un croquis à main levée d'un objet (nichoir, pochette textile), scier du balsa ou des tourillons avec une boîte à onglets et recoudre un bouton ou réaliser un point avant.",
-        apres:"En P5-P6, ils réaliseront des patrons/développements à l'échelle et maîtriseront les nœuds et assemblages solides.",
-        fmttn:"Suivre un mode opératoire (verbes d'action + croquis), réaliser un croquis à main levée et utiliser scie à dos, serre-joint, aiguille et marteau léger.",
-        sciences:"Comparer les propriétés mécaniques des matériaux (flexibilité, dureté, masse volumique / flottabilité).",
-        mathsFr:"Maths : Utiliser l'équerre pour tracer des angles droits et des droites parallèles/perpendiculaires. Français : Rédiger les étapes de fabrication d'un objet.",
-        securite:"Fixer obligatoirement toute pièce de bois avec un serre-joint avant de scier ou percer et adopter une posture stable.",
-        materiel:["Boîtes à onglets, scies à dos, serre-joints","Planchettes de bois tendre (peuplier, balsa) ou tourillons","Tissu toile de jute/coton, boutons à 2 ou 4 trous, fil et aiguilles"],
-        astuce:"L'atelier « Permis de recoudre son bouton » en P3-P4 est un attendu concret d'autonomie durable que les élèves adorent rapporter à la maison." },
+        avant:"En M1-M2, les élèves ont exploré textures et pliages.",
+        pendant:"Découper en suivant une ligne, perforer, relier par attache parisienne ou couture gros chas sur carton perforé.",
+        apres:"En P1-P2, ils mesureront à la latte avant de tracer.",
+        fmttn:"Choisir le mode d'assemblage approprié (colle, attache, fil).",
+        sciences:"Tester la résistance à l'eau de différents matériaux.",
+        mathsFr:"Maths : Assembler des formes géométriques. Français : Suivre une fiche en 3 étapes illustrées.",
+        securite:"Ranger les outils tranchants immédiatement.",
+        materiel:["Ciseaux ergonomiques, perforatrices, attaches parisiennes","Aiguilles en plastique et laine"],
+        astuce:"Règle de l'atelier : on ne découpe jamais au milieu d'une feuille, on part toujours du bord !" },
+      { id:3, niveau:'P1 - P2', icone:'📐', titre:'3. Mesurer, tracer et assembler par récupération', autonomie:"Suivi guidé avec contrôle du traçage",
+        avant:"En M3, les élèves ont découpé sur ligne et assemblé.",
+        pendant:"Mesurer et tracer à la latte, poncer du bois tendre et fabriquer un objet utilitaire en récup.",
+        apres:"En P3-P4, ils utiliseront l'équerre et la scie à dos.",
+        fmttn:"Utiliser la latte pour mesurer et tracer, trier les chutes.",
+        sciences:"Identifier l'origine des matériaux courants (bois, coton, plastique).",
+        mathsFr:"Maths : Tracer des segments en cm. Français : Lire la liste du matériel.",
+        securite:"Maintenir fermement la pièce lors du ponçage.",
+        materiel:["Lattes graduées, crayons","Papier abrasif et cales à poncer","Boîtes en carton, chutes"],
+        astuce:"« Je mesure deux fois, je trace une fois, je fais valider, puis je coupe ! »" },
+      { id:4, niveau:'P3 - P4', icone:'🪡', titre:'4. Croquis coté, couture et travail du bois tendre', autonomie:"Mode opératoire illustré en sécurité",
+        avant:"En P1-P2, les élèves ont mesuré à la latte et poncé.",
+        pendant:"Réaliser un croquis à main levée, scier du balsa avec boîte à onglets, coudre un bouton.",
+        apres:"En P5-P6, ils réaliseront des patrons à l'échelle.",
+        fmttn:"Suivre un mode opératoire, croquis à main levée, scie à dos, serre-joint, marteau.",
+        sciences:"Comparer les propriétés mécaniques (flexibilité, dureté).",
+        mathsFr:"Maths : Utiliser l'équerre pour angles droits. Français : Rédiger les étapes de fabrication.",
+        securite:"Fixer obligatoirement toute pièce avec un serre-joint avant de scier.",
+        materiel:["Boîtes à onglets, scies à dos, serre-joints","Balsa ou tourillons","Tissu, boutons, fil et aiguilles"],
+        astuce:"L'atelier « Permis de recoudre son bouton » est un classique adoré par les élèves." },
       { id:5, niveau:'P5 - P6', icone:'🔨', titre:'5. Patrons, assemblages techniques et upcycling', autonomie:"Travail d'équipe sur plan coté",
-        avant:"En P3-P4, les élèves ont utilisé le serre-joint, la boîte à onglets et les premiers points de couture.",
-        pendant:"Concevoir le patron (développement) d'un contenant ou sac, assembler par vissage/clouage ou couture solide, réaliser les nœuds de base et réparer/transformer un objet usagé.",
-        apres:"En S1-S2, ils passeront au dessin technique normé, au pied à coulisse et à la modélisation 2D/3D pour découpe laser ou impression 3D.",
-        fmttn:"Appliquer des gestes techniques précis (nouer des nœuds de base, scier, visser, coudre), contrôler les dimensions et partager la fiche projet sur l'ENT.",
-        sciences:"Analyser le cycle de vie d'un produit (extraction, fabrication, transport, usage, fin de vie) et la règle des 5R (Refuser, Réduire, Réutiliser, Réparer, Recycler).",
-        mathsFr:"Maths : Construire le développement d'un solide (pavé droit, prisme), calculer l'aire de matière nécessaire pour limiter les chutes. Français : Rédiger un guide de réparation illustré.",
-        securite:"Porter des lunettes de protection lors du sciage/perçage et vérifier l'état des outils avant usage.",
-        materiel:["Tournevis, vrilles, marteaux, serre-joints, lunettes de sécurité","Vieux jeans ou t-shirts à transformer en sacs (upcycling)","Palettes ou caisses en bois non traité","Cordages pour l'apprentissage des nœuds"],
-        astuce:"Transformer un vieux t-shirt ou une jambe de jean en trousse/sac sans gaspillage combine patronage géométrique, couture et éducation circulaire." },
+        avant:"En P3-P4, les élèves ont utilisé serre-joints et points de couture.",
+        pendant:"Concevoir le patron d'un sac, assembler par vissage/clouage, nœuds de base, upcycling d'un objet usagé.",
+        apres:"En S1-S2, dessin technique normé et CAO 2D/3D (laser/3D).",
+        fmttn:"Nœuds de base, scier, visser, coudre, contrôler les dimensions.",
+        sciences:"Analyser le cycle de vie (règle des 5R : Refuser, Réduire, Réutiliser, Réparer, Recycler).",
+        mathsFr:"Maths : Développement d'un solide, calcul d'aire pour limiter les chutes. Français : Guide de réparation illustré.",
+        securite:"Porter des lunettes de protection lors du sciage.",
+        materiel:["Tournevis, vrilles, marteaux, lunettes","Vieux jeans ou t-shirts (upcycling)","Caisses en bois"],
+        astuce:"Transformer une jambe de jean en trousse combine patronage géométrique et économie circulaire." },
       { id:6, niveau:'S1 - S2', icone:'📏', titre:'6. Cotation au pied à coulisse, CAO 2D/3D et réparation', autonomie:"Conception numérique et prototypage en FabLab",
-        avant:"En P5-P6, les élèves ont travaillé les développements géométriques et l'assemblage manuel.",
-        pendant:"Mesurer une pièce cassée au pied à coulisse (S1), la modéliser en 2D (SVG pour découpe laser/vinyle) ou en 3D (STL pour imprimante 3D) (S2) afin de réparer un objet réel.",
-        apres:"En S3, ils mèneront un projet complet d'éco-conception avec cahier des charges, tests de résistance et diagnostic.",
-        fmttn:"S1 : Lire une fiche technique, démonter/remonter un objet et mesurer au pied à coulisse. S2 : Modéliser numériquement un objet en 2D/3D et argumenter le choix d'un matériau durable.",
-        sciences:"Étudier la conductivité thermique/électrique et la biodégradabilité des polymères (ex. PLA vs ABS/PETG).",
-        mathsFr:"Maths : Échelles, cotation au dixième de millimètre, coordonnées cartésiennes (X, Y, Z) et volumes de solides. Français : Rédiger un argumentaire comparant réparation et rachat.",
-        securite:"Respecter les consignes de sécurité des machines à commande numérique (ventilation laser, plateau chauffant 3D) et trier les chutes de filaments/MDF.",
-        materiel:["Pieds à coulisse (vernier et numériques)","Logiciels Tinkercad / Inkscape","Imprimante 3D (filament PLA biosourcé) ou découpeuse laser / Cricut","Objets du quotidien ayant une pièce plastique/bois manquante"],
-        astuce:"Demandez à chaque groupe d'apporter un objet de l'école à qui il manque un capuchon, un bouton ou une charnière : le mesurer au pied à coulisse et l'imprimer en 3D rend la FMTTN magique." },
-      { id:7, niveau:'S3', icone:'🏭', titre:'7. Éco-conception complète, contrôle qualité et diagnostic', autonomie:"Gestion de projet autonome et critique technologique",
-        avant:"En S1-S2, les élèves ont appris la mesure de précision au pied à coulisse et la modélisation 2D/3D.",
-        pendant:"Concevoir un prototype répondant à un cahier des charges durable, optimiser l'imbrication des pièces pour zéro perte matière, tester sa résistance mécanique et corriger ses défauts.",
-        apres:"Fin du Tronc Commun : citoyen capable de concevoir, réparer et évaluer la durabilité des objets techniques.",
-        fmttn:"Diagnostiquer la cause de rupture ou de dysfonctionnement d'un assemblage mécanique, modifier la modélisation ou le matériau et valider le prototype.",
-        sciences:"Relier la structure de la matière aux contraintes mécaniques (traction, compression, flexion, cisaillement) et au bilan énergétique de fabrication.",
-        mathsFr:"Maths : Optimiser le calepinage (surface utile vs chutes en %), tolérances dimensionnelles et modélisation algébrique. Français : Rédiger et versionner un dossier technique collaboratif.",
-        securite:"Autonomie complète à l'atelier, gestion sécurisée des équipements et réflexion éthique sur l'obsolescence programmée.",
-        materiel:["Atelier FabLab (laser, 3D, outillage à main complet)","Dynamomètres ou masses de test de flexion","Tableur de calcul de rendement matière","Grille d'analyse du cycle de vie"],
-        astuce:"Organisez un défi de « pont ou support minimaliste » découpé au laser : celui qui supporte 2 kg avec la masse de bois la plus faible remporte le défi d'éco-conception." }
+        avant:"En P5-P6, développement géométrique et assemblage manuel.",
+        pendant:"Mesurer une pièce cassée au pied à coulisse (S1), modéliser en 2D/3D (S2) pour imprimer ou découper au laser la pièce de rechange.",
+        apres:"En S3, projet complet d'éco-conception.",
+        fmttn:"Démonter/remonter, pied à coulisse, modélisation 2D/3D, argumenter la durabilité.",
+        sciences:"Étudier conductivité et biodégradabilité des polymères (PLA vs ABS).",
+        mathsFr:"Maths : Échelles, cotation au dixième de millimètre, coordonnées X/Y/Z. Français : Argumentaire réparation vs rachat.",
+        securite:"Respect des consignes des machines à commande numérique.",
+        materiel:["Pieds à coulisse numériques","Tinkercad / Inkscape","Imprimante 3D (PLA) ou découpeuse laser"],
+        astuce:"Réparer un objet de l'école auquel il manque un capuchon ou une charnière grâce à l'imprimante 3D." },
+      { id:7, niveau:'S3', icone:'🏭', titre:'7. Éco-conception complète, contrôle qualité et diagnostic', autonomie:"Gestion de projet autonome",
+        avant:"En S1-S2, mesure au pied à coulisse et CAO 2D/3D.",
+        pendant:"Concevoir un prototype durable, optimiser le calepinage (zéro perte), tester sa résistance et corriger les défauts.",
+        apres:"Fin du Tronc Commun : citoyen capable de concevoir et réparer.",
+        fmttn:"Diagnostiquer la cause de rupture d'un assemblage, modifier le modèle et valider.",
+        sciences:"Relier structure de la matière et contraintes mécaniques (flexion, cisaillement).",
+        mathsFr:"Maths : Calepinage (% de chutes), tolérances et modélisation algébrique. Français : Dossier technique versionné.",
+        securite:"Autonomie complète à l'atelier et éthique sur l'obsolescence programmée.",
+        materiel:["Atelier FabLab complet","Dynamomètres de test","Tableur de rendement matière"],
+        astuce:"Défi du « support minimaliste » découpé au laser : celui qui supporte 2 kg avec le moins de matière l'emporte." }
     ]
   },
 
   meca: {
-    id: 'meca',
-    hueBase: 255,
-    nomCourt: 'Objets techniques, Énergie & Robotique',
+    id: 'meca', hueBase: 255, nomCourt: 'Objets techniques & Robotique',
     titre: "De l'objet qu'on manipule au système mécatronique programmé",
     sousTitre: 'Champ FMTTN : Mécanique, électricité, énergies renouvelables, algorithmique et robotique (M1 à S3)',
     code: '941',
     paliers: [
-      { id:1, niveau:'M1 - M2', icone:'🧱', titre:'1. Assemblages libres, équilibre et objets roulants', autonomie:"Exploration accompagnée par l'adulte",
-        avant:"Jeux de construction libres à la maison ou en crèche.",
-        pendant:"Emboîter, empiler, visser/dévisser de gros écrous, construire une tour stable ou un véhicule qui roule sur un plan incliné.",
-        apres:"En M3, les élèves programmeront des déplacements simples par flèches au sol (algorithmique débranchée).",
-        fmttn:"Manipuler des jeux d'assemblage et des outils factices/adaptés (grosse clé, tournevis) pour construire un objet stable.",
-        sciences:"Observer l'effet d'une poussée, le roulement d'une roue ou la flottabilité d'un objet dans le bac à eau.",
-        mathsFr:"Maths : Comparer des hauteurs (plus haut / plus bas) et se repérer dans l'espace (dessus, dessous, devant, derrière). Français : Nommer les parties d'un objet (roue, axe, toit).",
-        securite:"Ne pas porter les petites pièces à la bouche et ranger les bacs de construction pour éviter les chutes.",
-        materiel:["Briques d'emboîtement géantes, jeux de boulons/écrous en bois ou plastique","Plans inclinés (planches) et cylindres/roues","Bac à eau pour tests flotte/coule"],
-        astuce:"Proposez une boîte d'objets dont certains ont des roues carrées ou décentrées : les enfants comprennent immédiatement par l'essai pourquoi la roue ronde centrée est indispensable." },
+      { id:1, niveau:'M1 - M2', icone:'🧱', titre:'1. Assemblages libres, équilibre et objets roulants', autonomie:"Exploration accompagnée",
+        avant:"Jeux de construction libres.",
+        pendant:"Emboîter, empiler, visser de gros écrous, construire une tour stable ou un véhicule qui roule sur plan incliné.",
+        apres:"En M3, programmation par flèches au sol (débranché).",
+        fmttn:"Manipuler jeux d'assemblage et outils adaptés (tournevis).",
+        sciences:"Observer l'effet d'une poussée ou le roulement d'une roue.",
+        mathsFr:"Maths : Comparer des hauteurs et se repérer dans l'espace. Français : Nommer les parties d'un objet.",
+        securite:"Ne pas porter les petites pièces à la bouche.",
+        materiel:["Briques géantes, boulons/écrous en bois","Plans inclinés et cylindres","Bac à eau"],
+        astuce:"Proposez des roues carrées ou décentrées : les enfants comprennent pourquoi la roue ronde est indispensable." },
       { id:2, niveau:'M3', icone:'🧭', titre:'2. Mécanismes simples et codage débranché au sol', autonomie:"Travail en petits groupes sur quadrillage",
-        avant:"En M1-M2, les élèves ont assemblé des blocs et expérimenté le roulement et l'équilibre.",
-        pendant:"Construire une balance à fléau ou un moulinet à vent, et programmer le déplacement d'un camarade ou d'un petit robot de sol à l'aide de cartes fléchées.",
-        apres:"En P1-P2, ils construiront des leviers/poulies et découvriront leurs premières séquences d'instructions codées.",
-        fmttn:"Assembler des éléments mobiles (axe, roue, pale) et vérifier que le mécanisme tourne librement.",
-        sciences:"Ressentir et observer la force du vent ou de l'eau sur les pales d'un moulinet.",
-        mathsFr:"Maths : Se déplacer sur un quadrillage en suivant une suite ordonnée de flèches (avancer, tourner). Français : Expliquer oralement le trajet prévu avant de le tester.",
-        securite:"Utiliser les axes et bâtonnets sans courir et respecter le matériel robotique ou de construction.",
-        materiel:["Quadrillage au sol (tapis) et cartes flèches (Avancer, Gauche, Droite)","Abeilles robotiques (type Bee-Bot) ou figurines","Papier cartonné, attaches parisiennes et pailles pour moulinets"],
-        astuce:"Faites toujours jouer le « robot humain » (un élève sur le tapis exécutant les cartes fléchées posées par son binôme) avant d'allumer le robot électronique !" },
+        avant:"En M1-M2, assemblages et roulement.",
+        pendant:"Construire une balance à fléau ou un moulinet, programmer le déplacement d'un camarade ou robot de sol avec cartes fléchées.",
+        apres:"En P1-P2, leviers/poulies et premières séquences codées.",
+        fmttn:"Assembler des éléments mobiles (axe, roue, pale).",
+        sciences:"Observer la force du vent ou de l'eau sur un moulinet.",
+        mathsFr:"Maths : Se déplacer sur quadrillage selon une suite de flèches. Français : Expliquer le trajet prévu.",
+        securite:"Utiliser les axes sans courir.",
+        materiel:["Tapis quadrillage et cartes flèches","Robots de sol (Bee-Bot)","Papier et pailles"],
+        astuce:"Faites jouer le « robot humain » sur le tapis avant d'allumer le robot électronique." },
       { id:3, niveau:'P1 - P2', icone:'💡', titre:'3. Leviers, engrenages et premier circuit électrique', autonomie:"Expérimentation guidée par défis",
-        avant:"En M3, les élèves ont découvert les axes/roues et le déplacement codé sur quadrillage.",
-        pendant:"Expérimenter les leviers (balançoire, pince) et les engrenages, et allumer une ampoule ou un petit moteur avec une pile plate de 4,5 V et un interrupteur.",
-        apres:"En P3-P4, ils testeront isolants et conducteurs, construiront une maquette animée et coderont par blocs.",
-        fmttn:"Monter et démonter un mécanisme simple (engrenages, poulie) ou un circuit électrique basse tension en suivant un schéma illustré.",
-        sciences:"Identifier les éléments d'un circuit électrique fermé (générateur, récepteur, fils) et observer la transmission d'un mouvement.",
-        mathsFr:"Maths : Repérer le sens de rotation (horlogique / antihorlogique) et compter les dents d'un engrenage. Français : Légender le schéma d'une lampe de poche ou d'un circuit.",
-        securite:"Distinguer formellement la pile 4,5 V de la classe (sans danger) des prises électriques murales 230 V (danger mortel).",
-        materiel:["Piles plates 4,5 V, porte-ampoules, ampoules, fils à pinces crocodiles","Kits d'engrenages et de leviers","Affiche de prévention sécurité électrique"],
-        astuce:"Le défi « Allumer le nez lumineux du clown avec une pile et deux fils » permet aux élèves de découvrir par eux-mêmes la notion de boucle fermée." },
-      { id:4, niveau:'P3 - P4', icone:'🔋', titre:'4. Isolants/conducteurs, poulies et programmation par blocs', autonomie:"Suivi d'un mode opératoire et test d'hypothèses",
-        avant:"En P1-P2, les élèves ont réalisé un circuit électrique simple et manipulé des engrenages.",
-        pendant:"Construire un jeu d'adresse électrique ou un monte-charge à poulie/treuil, tester la conductivité de divers matériaux et programmer une séquence sur écran ou robot.",
-        apres:"En P5-P6, ils compareront circuits série/parallèle, sources d'énergie renouvelables et utiliseront des boucles en programmation.",
-        fmttn:"Suivre un mode opératoire (verbes d'action + croquis), réaliser le croquis d'un mécanisme (poulie, bielle, interrupteur maison) et dénuder/connecter proprement.",
-        sciences:"Classer les matériaux en conducteurs et isolants électriques ; comprendre l'avantage mécanique d'une poulie ou d'un levier.",
-        mathsFr:"Maths : Mesurer des masses soulevées, tracer des cercles au compas (poulies/roues) et repérer des coordonnées sur une grille. Français : Rédiger la règle et la fiche technique du jeu électrique fabriqué.",
-        securite:"Éviter tout court-circuit (échauffement de la pile), trier les piles usagées (Bebat) et adopter une posture ergonomique.",
-        materiel:["Piles, buzzers ou LED, attaches parisiennes, trombones, papier alu","Échantillons à tester (bois, cuivre, plastique, fer, carton)","Poulies, ficelle et petites charges","Interface de programmation par blocs (ScratchJr / Scratch)"],
-        astuce:"Fabriquer un interrupteur artisanal avec deux attaches parisiennes et un trombone sur un morceau de carton fait comprendre instantanément comment fonctionne tout interrupteur mural." },
-      { id:5, niveau:'P5 - P6', icone:'☀️', titre:'5. Énergies renouvelables, circuits série/parallèle et boucles de code', autonomie:"Conception en équipe et débogage",
-        avant:"En P3-P4, les élèves ont maîtrisé le circuit simple, les conducteurs et les mécanismes à poulies.",
-        pendant:"Construire une maquette éclairée par panneau solaire ou mini-éolienne (circuits en série et en parallèle) et programmer un comportement avec boucles et événements.",
-        apres:"En S1-S2, ils mesureront tension/intensité au multimètre, liront un schéma normalisé et brancheront des capteurs sur microcontrôleur.",
-        fmttn:"Assembler une maquette fonctionnelle, choisir le montage électrique adapté (parallèle pour l'éclairage) et partager le programme et les relevés sur l'ENT.",
-        sciences:"Identifier les sources d'énergie renouvelables et non renouvelables et décrire les transformations d'énergie (lumineuse → électrique → mécanique).",
-        mathsFr:"Maths : Relever et représenter sous forme de graphique la production solaire selon l'inclinaison (angles en degrés). Français : Argumenter en faveur des économies d'énergie à l'école.",
-        securite:"Manipuler les outils de perçage/découpe en sécurité et gérer la récupération des composants électroniques.",
-        materiel:["Mini-cellules photovoltaïques, petits moteurs CC, LED","Rapporteurs d'angles pour orienter le panneau solaire","Ordinateurs/tablettes avec environnement de programmation par blocs"],
-        astuce:"Demandez aux élèves pourquoi, dans une maison, les lampes sont branchées en parallèle et non en série : dès qu'ils dévissent une ampoule en série, toute leur maquette s'éteint !" },
-      { id:6, niveau:'S1 - S2', icone:'📟', titre:'6. Multimètre, capteurs, logigrammes et fabrication de châssis', autonomie:"Analyse technique, mesure et programmation conditionnelle",
-        avant:"En P5-P6, les élèves ont expérimenté les circuits série/parallèle et les boucles de programmation.",
-        pendant:"Démonter/remonter un objet électromécanique, mesurer une tension au multimètre, brancher un capteur (lumière, distance) sur Micro:bit/Arduino (S1) et écrire un logigramme avec condition SI… ALORS… (S2).",
-        apres:"En S3, ils automatiseront un système complet multi-capteurs et diagnostiqueront les pannes matérielles et logicielles.",
-        fmttn:"S1 : Expliciter une fiche technique, démonter/remonter un objet et brancher un capteur. S2 : Modéliser une pièce mécanique en 3D, utiliser un tableur et concevoir un logigramme avec boucles et conditions.",
-        sciences:"Mesurer tension (V) et intensité (A), calculer la puissance électrique ($P = U \\times I$) et l'énergie consommée en Wh.",
-        mathsFr:"Maths : Utiliser des variables, des opérateurs de comparaison (<, >, =) et tracer la caractéristique d'un capteur sur tableur. Français : Rédiger une notice de dépannage ou de montage.",
-        securite:"Choisir le bon calibre sur le multimètre, travailler hors tension lors du câblage et privilégier la réparation.",
-        materiel:["Multimètres numériques","Cartes Micro:bit ou Arduino Uno + capteurs (ultrasons, photorésistance) + servomoteurs","Objets techniques à démonter (lampe dynamo, petit ventilateur)","Logiciel de logigramme et CAO 3D"],
-        astuce:"Démonter une lampe de poche à dynamo (manivelle) en S1 permet d'observer en un seul objet : engrenages multiplicateurs, alternateur, redresseur, batterie et LED !" },
-      { id:7, niveau:'S3', icone:'🤖', titre:'7. Système autonome intelligent, logigramme complexe et dépannage', autonomie:"Conception mécatronique, algorithmique et diagnostic",
-        avant:"En S1-S2, les élèves ont utilisé le multimètre, branché un capteur et rédigé leurs premiers logigrammes.",
-        pendant:"Concevoir et programmer un prototype automatisé éco-énergétique (ex. éclairage public intelligent, barrière automatique, trieur sélectif, suiveur solaire) et diagnostiquer toute panne matérielle ou logicielle.",
-        apres:"Fin du Tronc Commun : citoyen éclairé face aux systèmes automatisés, aux algorithmes et à la transition énergétique.",
-        fmttn:"Représenter sous forme de logigramme un système automatisé complet, diagnostiquer un dysfonctionnement (mécanique, électrique ou algorithmique) et y remédier.",
-        sciences:"Évaluer le rendement énergétique d'une chaîne de conversion et l'empreinte environnementale du numérique et des batteries.",
-        mathsFr:"Maths : Modéliser le comportement d'un capteur par une fonction algébrique, critiquer des séries de mesures. Français : Co-rédiger un dossier technique avec gestion de versions.",
-        securite:"Autonomie complète sur la sécurité électrique/mécanique et réflexion critique sur la place des algorithmes dans la société.",
-        materiel:["Kit mécatronique complet (capteurs, servomoteurs, relais, afficheur)","Multimètre et wattmètre","Éditeur de logigrammes normalisés et IDE de programmation","Prototypes avec pannes simulées"],
-        astuce:"Introduisez un bug subtil (fil de masse mal inséré sur le breadboard ou condition `<` au lieu de `>` dans le code) : les élèves doivent utiliser le multimètre et le logigramme pour isoler la panne." }
+        avant:"En M3, axes/roues et codage débranché.",
+        pendant:"Expérimenter les leviers et engrenages, allumer une ampoule ou moteur avec une pile 4,5 V et un interrupteur.",
+        apres:"En P3-P4, isolants/conducteurs et code par blocs.",
+        fmttn:"Monter/démonter un mécanisme ou circuit basse tension sur schéma.",
+        sciences:"Identifier les éléments d'un circuit fermé (générateur, récepteur, fils).",
+        mathsFr:"Maths : Sens de rotation des engrenages et comptage des dents. Français : Légender un schéma.",
+        securite:"Distinguer la pile 4,5 V (sans danger) des prises murales 230 V (mortel).",
+        materiel:["Piles 4,5 V, douilles, ampoules, fils crocodiles","Kits d'engrenages"],
+        astuce:"Le défi « Allumer le nez lumineux du clown » fait découvrir la notion de boucle fermée." },
+      { id:4, niveau:'P3 - P4', icone:'🔋', titre:'4. Isolants/conducteurs, poulies et programmation par blocs', autonomie:"Mode opératoire et test d'hypothèses",
+        avant:"En P1-P2, circuit simple et engrenages.",
+        pendant:"Construire un jeu d'adresse électrique ou monte-charge, tester la conductivité et programmer par blocs.",
+        apres:"En P5-P6, circuits série/parallèle et énergies renouvelables.",
+        fmttn:"Suivre un mode opératoire, croquis de mécanisme, dénuder et connecter.",
+        sciences:"Classer conducteurs et isolants ; avantage mécanique de la poulie.",
+        mathsFr:"Maths : Mesurer des masses, tracer des cercles au compas. Français : Rédiger la règle du jeu.",
+        securite:"Éviter les courts-circuits et trier les piles (Bebat).",
+        materiel:["Piles, buzzers, LED, trombones, alu","Poulies, ficelle","ScratchJr / Scratch"],
+        astuce:"Fabriquer un interrupteur artisanal avec un trombone montre comment fonctionne un interrupteur." },
+      { id:5, niveau:'P5 - P6', icone:'☀️', titre:'5. Énergies renouvelables, circuits série/parallèle et code', autonomie:"Conception en équipe et débogage",
+        avant:"En P3-P4, circuit simple et conducteurs.",
+        pendant:"Construire une maquette éclairée par panneau solaire (série vs parallèle) et programmer des boucles et événements.",
+        apres:"En S1-S2, multimètre et capteurs sur microcontrôleur.",
+        fmttn:"Assembler une maquette fonctionnelle et partager le code sur l'ENT.",
+        sciences:"Sources d'énergie renouvelables et transformations énergétiques.",
+        mathsFr:"Maths : Relever et représenter graphiquement la production solaire (angles). Français : Argumenter pour les économies d'énergie.",
+        securite:"Manipuler les outils de perçage en sécurité.",
+        materiel:["Cellules PV, petits moteurs, LED","Rapporteurs d'angles","Tablettes avec code par blocs"],
+        astuce:"Pourquoi les lampes d'une maison sont en parallèle ? En série, si une grille, tout s'éteint !" },
+      { id:6, niveau:'S1 - S2', icone:'📟', titre:'6. Multimètre, capteurs, logigrammes et châssis', autonomie:"Analyse technique et programmation conditionnelle",
+        avant:"En P5-P6, circuits et boucles de code.",
+        pendant:"Démonter un objet électromécanique, mesurer tension/intensité au multimètre, brancher capteurs sur Micro:bit (S1), écrire un logigramme avec condition SI… ALORS… (S2).",
+        apres:"En S3, système automatisé complet multi-capteurs.",
+        fmttn:"Fiche technique, démontage, multimètre, modélisation 3D et logigramme.",
+        sciences:"Calculer puissance ($P=U \\times I$) et énergie en Wh.",
+        mathsFr:"Maths : Variables, opérateurs logiques (<, >) et caractéristiques de capteurs. Français : Notice de dépannage.",
+        securite:"Calibre du multimètre et travail hors tension.",
+        materiel:["Multimètres","Micro:bit ou Arduino + capteurs (lumière, distance)","Logiciel de logigramme"],
+        astuce:"Démonter une lampe dynamo permet d'observer engrenages, alternateur, redresseur et LED en un seul objet." },
+      { id:7, niveau:'S3', icone:'🤖', titre:'7. Système autonome intelligent et logigramme complexe', autonomie:"Conception mécatronique et diagnostic",
+        avant:"En S1-S2, multimètre et premiers logigrammes.",
+        pendant:"Concevoir un prototype automatisé éco-énergétique (barrière auto, suiveur solaire) et diagnostiquer toute panne matérielle/logicielle.",
+        apres:"Fin du Tronc Commun : citoyen éclairé face aux systèmes automatisés.",
+        fmttn:"Représenter par logigramme un système automatisé, diagnostiquer et remédier à un dysfonctionnement.",
+        sciences:"Rendement énergétique et empreinte environnementale du numérique.",
+        mathsFr:"Maths : Modéliser le comportement d'un capteur par fonction algébrique. Français : Dossier technique collaboratif.",
+        securite:"Sécurité électrique basse tension et esprit critique sur les algorithmes.",
+        materiel:["Kit mécatronique (capteurs, servomoteurs, relais)","Multimètre et wattmètre","Prototypes à pannes simulées"],
+        astuce:"Introduire un bug subtil (mauvaise masse ou condition inversée) oblige à utiliser multimètre et logigramme." }
     ]
   }
 };
 
-/* Génère automatiquement les 3 salles d'Escape Game (M3, P3-P4, S3) à partir des 7 paliers du thème actif */
+/* Génère automatiquement les 3 salles d'Escape Game */
 function construireSallesDepuisPaliers(theme) {
   const digits = String(theme.code || '375').split('');
   const pM3 = theme.paliers[1] || theme.paliers[0];
@@ -660,25 +706,25 @@ function construireSallesDepuisPaliers(theme) {
       ep: [
         { t:'qcm', q:`En ${pM3.niveau}, quel attendu FMTTN est directement travaillé dans cette salle ?`,
           o:[pM3.fmttn, pS3.fmttn, "Modéliser en 3D avec cotes au dixième de millimètre et formules de tableur"], a:0,
-          e:`Exact ! En ${pM3.niveau}, on vise l'autonomie sur les outils de base et la sécurité immédiate, tandis que la modélisation 3D et le diagnostic algorithmique relèvent de S2-S3.` },
+          e:`Exact ! En ${pM3.niveau}, on vise l'autonomie sur les outils de base et la sécurité immédiate.` },
         { t:'qcm', q:`Comment les Sciences s'articulent-elles avec la FMTTN à ce palier (${pM3.niveau}) ?`,
           o:["Par l'algèbre et l'analyse statistique sur tableur", pM3.sciences, "Par le calcul de puissance électrique au multimètre"], a:1,
-          e:`Parfait : en ${pM3.niveau}, l'observation concrète et la synthèse visuelle/sensorielle ancrent le geste technique.` },
+          e:`Parfait : l'observation concrète et la synthèse visuelle/sensorielle ancrent le geste technique.` },
         { t:'libre', q:`Astuce de terrain du palier ${pM3.niveau} : « ${pM3.astuce} ». En 2 ou 3 phrases, décrivez ce que font concrètement vos élèves et quels attendus (FMTTN / sécurité) ils mobilisent.`,
-          at:`Les élèves manipulent le dispositif de manière autonome (${pM3.pendant}), choisissent l'outil adéquat (${pM3.fmttn}) et verbalisent/appliquent les règles de sécurité et d'économie des ressources (${pM3.securite}).` }
+          at:`Les élèves manipulent le dispositif de manière autonome (${pM3.pendant}), choisissent l'outil adéquat (${pM3.fmttn}) et appliquent les règles de sécurité et d'économie des ressources (${pM3.securite}).` }
       ]
     },
     {
       niv: pP3.niveau, nom: `Salle 2 · ${pP3.titre.replace(/^\d+\.\s*/, '')}`, digit: digits[1] || '7',
-      hist: `Deuxième porte : le cœur du primaire (${pP3.niveau}), où l'élève passe du geste guidé à la mesure précise et au mode opératoire.`,
+      hist: `Deuxième porte : le cœur du primaire (${pP3.niveau}), passage du geste guidé à la mesure précise.`,
       dossier: `Mission ${pP3.niveau} : ${pP3.pendant} | Acquis avant : ${pP3.avant} | FMTTN : ${pP3.fmttn} | Maths/Français : ${pP3.mathsFr}`,
       ep: [
         { t:'qcm', q:`Qu'est-ce que les élèves ont construit juste avant ce palier (acquis préalables) ?`,
           o:["La programmation d'un système automatisé complet avec logigramme", pP3.avant, "La modélisation 3D par extrusion"], a:1,
           e:`Exact ! Le continuum s'appuie sur les acquis du cycle précédent : ${pP3.avant}` },
-        { t:'qcm', q:`Quel croisement Mathématiques / Français est mobilisé en ${pP3.niveau} ?`,
+        { t:'qcm', q:`Quel croisement Mathématiques / Français est mobilisé en ${pM3.niveau} ?`,
           o:[pP3.mathsFr, "L'enfilage de grosses perles selon une couleur", "La critique algébrique de capteurs connectés"], a:0,
-          e:`Tout à fait : la mesure précise, les tableaux/diagrammes et la lecture de modes opératoires structurent le palier ${pP3.niveau}.` },
+          e:`Tout à fait : la mesure précise, les tableaux/diagrammes et les modes opératoires structurent le palier.` },
         { t:'libre', q:`Mise en pratique en ${pP3.niveau} : « ${pP3.astuce} ». En 2 ou 3 phrases : quelle consigne donnez-vous aux élèves et comment reliez-vous FMTTN et Mathématiques ?`,
           at:`Les élèves suivent un mode opératoire et utilisent les instruments de mesure/traçage (${pP3.fmttn}) tout en mobilisant les savoir-faire mathématiques (${pP3.mathsFr}) et la posture sécuritaire (${pP3.securite}).` }
       ]
@@ -689,11 +735,11 @@ function construireSallesDepuisPaliers(theme) {
       dossier: `Mission ${pS3.niveau} : ${pS3.pendant} | FMTTN : ${pS3.fmttn} | Sciences : ${pS3.sciences} | Sécurité : ${pS3.securite}`,
       ep: [
         { t:'qcm', q:`Quelle démarche caractérise l'attendu phare de FMTTN en ${pS3.niveau} ?`,
-          o:["Découvrir les matières uniquement par le toucher avec l'aide de l'adulte", pS3.fmttn, "Trier des objets selon leur couleur"], a:1,
-          e:`Exact : la fin du Tronc Commun (${pS3.niveau}) vise le logigramme, l'autonomie et le diagnostic méthodique des pannes ou anomalies.` },
+          o:["Découvrir les matières par le toucher avec l'adulte", pS3.fmttn, "Trier des objets selon leur couleur"], a:1,
+          e:`Exact : la fin du Tronc Commun (${pS3.niveau}) vise le logigramme, l'autonomie et le diagnostic méthodique des pannes.` },
         { t:'qcm', q:`Quel attendu scientifique accompagne ce palier ${pS3.niveau} ?`,
           o:[pS3.sciences, "Reconnaître le sucré et le salé", "Classer des graines par taille"], a:0,
-          e:`Bravo : ce lien scientifique donne tout son sens aux mesures et à la régulation technique en ${pS3.niveau}.` },
+          e:`Bravo : ce lien scientifique donne tout son sens aux mesures et à la régulation technique.` },
         { t:'libre', q:`Défi de diagnostic en ${pS3.niveau} : « ${pS3.astuce} ». En 2 ou 3 phrases : quelle démarche attendez-vous des élèves et quelle preuve de réussite validez-vous ?`,
           at:`Les élèves formulent des hypothèses sur la cause du dysfonctionnement, vérifient méthodiquement le système à l'aide du logigramme et des instruments (${pS3.fmttn}), puis remédient au problème en sécurité (${pS3.securite}).` }
       ]
@@ -702,7 +748,7 @@ function construireSallesDepuisPaliers(theme) {
 }
 
 /* ============================================================================
-   LOGIQUE DE L'APPLICATION (STUDIO + ESCAPE GAME + CONVERSION HTML RICHE)
+   LOGIQUE DE L'APPLICATION
    ============================================================================ */
 const $ = id => document.getElementById(id);
 const esc = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -725,46 +771,39 @@ const LABELS = {
   tuto: '🛠️ Tuto express enseignant'
 };
 
-// Matrices détaillées inspirées de votre Code.gs pour obtenir des documents riches
 const CONSIGNES_RICHES = {
   journal: `Rédige 3 entrées distinctes et prêtes à copier pour le JOURNAL DE CLASSE :
 1) FORMULATION OFFICIELLE COMPLÈTE (mentionnant explicitement les attendus FMTTN et le croisement Sciences / Maths / Français).
-2) FORMULATION COURTE (calibrée pour les cases étroites de Smartschool ou d'un journal papier).
+2) FORMULATION COURTE (calibrée pour Smartschool / journal papier).
 3) FORMULATION ÉLÈVES & PARENTS ("Aujourd'hui, nous avons appris à...").`,
 
-  fiche: `Rédige une FICHE DE PRÉPARATION CLÉ EN MAIN très détaillée et structurée comprenant :
-1) TITRE DE LA SÉANCE & OBJECTIF OPÉRATIONNEL précis ("Au terme de la séance, l'élève sera capable de...").
-2) MATÉRIEL & PRÉPARATION DU POSTE DE TRAVAIL (quantités par groupe, organisation spatiale).
-3) DÉROULEMENT MINUTÉ EN 3 PHASES adapté à la durée choisie :
-   - Phase 1 : Mise en situation, rappel des acquis préalables et contrat de sécurité.
-   - Phase 2 : Action, manipulation et apprentissage du geste technique FMTTN + croisement disciplinaire.
-   - Phase 3 : Structuration, rangement, gestion durable des ressources/déchets et trace écrite.
-4) VIGILANCE SÉCURITÉ, ERGONOMIE (posture corporelle) & DÉVELOPPEMENT DURABLE.
-5) GRILLE D'ÉVALUATION CRITÉRIÉE à 3 critères tirés des attendus avec indicateurs observables.`,
+  fiche: `Rédige une FICHE DE PRÉPARATION CLÉ EN MAIN très détaillée comprenant :
+1) TITRE DE LA SÉANCE & OBJECTIF OPÉRATIONNEL précis.
+2) MATÉRIEL & PRÉPARATION DU POSTE DE TRAVAIL.
+3) DÉROULEMENT MINUTÉ EN 3 PHASES (Mise en situation, Action/Manipulation, Structuration).
+4) VIGILANCE SÉCURITÉ, ERGONOMIE & DÉVELOPPEMENT DURABLE.
+5) GRILLE D'ÉVALUATION CRITÉRIÉE sous forme de TABLEAU HTML (avec colonnes Critère, Indicateur, Maîtrise).`,
 
-  inclusif: `Rédige une fiche complète d'AMÉNAGEMENTS RAISONNABLES concrets de terrain :
-1) ERGONOMIE & MOTRICITÉ (adaptation des outils, hauteur de travail, préhension).
-2) ÉLÈVES DYS / NON-LECTEURS (découpage du mode opératoire en 3 étapes visuelles/pictogrammes, allègement de la charge écrite).
-3) GESTION DE L'ATTENTION & DE L'ESPACE - TDAH (balisage du poste, minutage visuel, gestion des transitions).
-4) RÔLES COOPÉRATIFS EN PETIT GROUPE (répartition claire des responsabilités avec rotation).`,
+  inclusif: `Rédige une fiche complète d'AMÉNAGEMENTS RAISONNABLES concrets :
+1) ERGONOMIE & MOTRICITÉ.
+2) ÉLÈVES DYS / NON-LECTEURS (découpage en 3 pictogrammes/étapes).
+3) ATTENTION & TDAH (minutage visuel, espace balisé).
+4) RÔLES COOPÉRATIFS EN PETIT GROUPE.`,
 
-  tuto: `Rédige un TUTORIEL EXPRESS RASSURANT pour un enseignant qui n'est ni jardinier, ni bricoleur, ni ingénieur :
-1) LE GESTE TECHNIQUE EXPLIQUÉ SIMPLEMENT (étape par étape, avec les mots exacts à dire aux élèves).
-2) LES 3 ERREURS CLASSIQUES DES ÉLÈVES à cet âge et le remède immédiat en 30 secondes pour chacune.
-3) L'ASTUCE "ZÉRO STRESS" pour gérer le matériel, la sécurité et le rangement sans débordement.`
+  tuto: `Rédige un TUTORIEL EXPRESS RASSURANT pour l'enseignant :
+1) LE GESTE TECHNIQUE EXPLIQUÉ SIMPLEMENT pas à pas.
+2) LES 3 ERREURS CLASSIQUES DES ÉLÈVES et le remède en 30 secondes.
+3) L'ASTUCE "ZÉRO STRESS" de gestion de classe et du rangement.`
 };
 
-/* Convertit intelligemment une réponse texte ou HTML de l'IA en HTML riche et assaini */
 function formaterReponseRiche(rawText, rawHtml) {
   const tagsOk = ['h3','h4','p','ul','ol','li','strong','em','br','table','thead','tbody','tr','th','td'];
   if (rawHtml && /<(h3|h4|p|ul|ol|table)\b/i.test(rawHtml)) {
-    return rawHtml
-      .replace(/```(?:html)?/gi, '')
+    return rawHtml.replace(/```(?:html)?/gi, '')
       .replace(/<(script|style|iframe|object|embed)[\s\S]*?<\/\1>/gi, '')
       .replace(/<(\/?)([a-z0-9]+)[^>]*>/gi, (m, s, t) => tagsOk.includes(t.toLowerCase()) ? `<${s}${t.toLowerCase()}>` : '')
       .trim();
   }
-  // Si ia.mjs renvoie du texte brut, on le structure proprement en HTML riche (titres, listes, gras)
   const lines = String(rawText || '').replace(/```[a-z]*/gi, '').split('\n');
   let html = '', inUl = false, inOl = false;
   const closeLists = () => { if (inUl) { html += '</ul>'; inUl = false; } if (inOl) { html += '</ol>'; inOl = false; } };
@@ -802,11 +841,15 @@ function getTheme() { return THEMES[curThemeKey] || THEMES.potager; }
 const hue = (base, i, total) => (base + Math.round(i * 110 / Math.max(total - 1, 1))) % 360;
 
 function init() {
-  // Sauvegarde d'un éventuel thème sur mesure créé précédemment
   const savedCustom = store.get('fmttn-custom-theme', null);
   if (savedCustom && savedCustom.paliers?.length) THEMES.custom = savedCustom;
 
-  // Barre de thèmes
+  // Gestion de l'Assistant au premier lancement
+  const dejaVisite = store.get('fmttn-deja-visite', false);
+  if (!dejaVisite) {
+    $('assistant-modal').classList.remove('hide');
+  }
+
   $('themes-bar').onclick = e => {
     const b = e.target.closest('.th-btn');
     if (!b) return;
@@ -836,6 +879,19 @@ function init() {
   activerTheme(curThemeKey);
 }
 
+function ouvrirAssistant() { $('assistant-modal').classList.remove('hide'); }
+function fermerAssistant(sauverPref) {
+  if (sauverPref && $('chk-no-assistant').checked) {
+    store.set('fmttn-deja-visite', true);
+  }
+  $('assistant-modal').classList.add('hide');
+}
+function lancerVisiteGuidee() {
+  changerVue('studio');
+  choisirPalier(0);
+  alert("✨ Bienvenue dans la visite !\n\n1. En haut, choisissez parmi les 4 thématiques FMTTN ou créez votre thème.\n2. Utilisez la frise pour naviguer de M1 à S3.\n3. Choisissez une période et cliquez sur l'un des 4 boutons pour générer vos documents pédagogiques par IA.\n\nBonne découverte !");
+}
+
 function activerTheme(key) {
   if (!THEMES[key]) key = 'potager';
   curThemeKey = key;
@@ -848,10 +904,9 @@ function activerTheme(key) {
 
   $('app-title').textContent = th.titre;
   $('app-sub').textContent = th.sousTitre;
-  $('badge-theme').textContent = `Thème actif : ${th.nomCourt || th.titre}`;
+  $('badge-theme').textContent = `Thème : ${th.nomCourt || th.titre}`;
   $('g-title').textContent = `Défi Escape Game · ${th.titre}`;
 
-  // Construction de la frise des 7 paliers
   $('frise').innerHTML = th.paliers.map((p, i) =>
     `<button class="pal" style="--ph:${hue(th.hueBase || 125, i, th.paliers.length)}" data-i="${i}" aria-pressed="false">
       <b>${esc(p.icone || '📘')} ${esc(p.niveau)}</b>
@@ -891,7 +946,7 @@ function choisirPalier(i) {
 
   $('d-niv').textContent = `${p.icone || '📘'} Niveau ${p.niveau}`;
   $('d-titre').textContent = p.titre;
-  $('d-auto').textContent = 'Autonomie des élèves : ' + (p.autonomie || 'Progressive selon le palier');
+  $('d-auto').textContent = 'Autonomie des élèves : ' + (p.autonomie || 'Progressive');
   $('d-avant').textContent = p.avant;
   $('d-pendant').textContent = p.pendant;
   $('d-apres').textContent = p.apres;
@@ -925,7 +980,6 @@ function majProgres() {
   $('prog').style.width = (all.length ? n / all.length * 100 : 0) + '%';
 }
 
-/* Génération des 4 documents riches via /api/ia (compatible ia.mjs actuel et nouveau) */
 async function genererDocument(typeAction, instructionSupplementaire = '') {
   lastDocType = typeAction;
   const th = getTheme();
@@ -944,28 +998,23 @@ async function genererDocument(typeAction, instructionSupplementaire = '') {
   const duree = $('o-duree').value;
   const note = $('o-note').value.trim();
 
-  // Dossier complet transmis à ia.mjs (mode feedback supporte jusqu'à 900+700+700+700 caractères dans l'ia.mjs actuel)
-  const dossierComplet = `THÈME : ${th.titre} | PALIER : ${p.titre} (${p.niveau}) | MISSION : ${p.pendant} | ACQUIS AVANT : ${p.avant} | SUITE : ${p.apres} | ATTENDUS FMTTN : ${p.fmttn} | SCIENCES : ${p.sciences} | MATHS & FRANÇAIS : ${p.mathsFr} | SÉCURITÉ : ${p.securite}`;
+  const dossierComplet = `THÈME : ${th.titre} | PALIER : ${p.titre} (${p.niveau}) | MISSION : ${p.pendant} | ATTENDUS FMTTN : ${p.fmttn} | SCIENCES : ${p.sciences} | MATHS & FRANÇAIS : ${p.mathsFr}`;
   const attenduStructure = CONSIGNES_RICHES[typeAction];
-  const contexteClasse = `Saison : ${saison} | Lieu : ${lieu} | Durée : ${duree}. ${note ? 'Précisions classe : ' + note + '.' : ''} ${instructionSupplementaire ? 'DEMANDE D’AJUSTEMENT : ' + instructionSupplementaire : ''}`;
+  const contexteClasse = `Saison : ${saison} | Lieu : ${lieu} | Durée : ${duree}. ${note ? 'Précisions : ' + note + '.' : ''} ${instructionSupplementaire ? 'DEMANDE : ' + instructionSupplementaire : ''}`;
 
   try {
     const r = await fetch('/api/ia', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        // Utilise 'feedback' pour passer toutes les données riches même sur l'ancien ia.mjs
-        mode: 'feedback',
-        typeAction,
-        theme: th.titre,
-        dossier: dossierComplet,
-        consigne: `Tu rédiges un document professionnel complet pour l'enseignant (${LABELS[typeAction]}). Ignore la limite de 4 lignes : développe chaque section en détail avec des titres en MAJUSCULES et des listes à puces (- ).`,
+        mode: 'feedback', typeAction, theme: th.titre, dossier: dossierComplet,
+        consigne: `Tu rédiges un document professionnel complet pour l'enseignant (${LABELS[typeAction]}). Développe chaque section en détail avec des titres et des listes.`,
         attendu: attenduStructure,
-        reponse: `Contexte de la classe à intégrer intégralement : ${contexteClasse}. Produis maintenant l'intégralité du document demandé dans la référence ci-dessus.`
+        reponse: `Contexte de la classe : ${contexteClasse}. Produis le document complet.`
       })
     });
     const j = await r.json();
-    if (!r.ok || (!j.text && !j.html)) throw new Error(j.error || 'Réponse vide');
+    if (!r.ok || (!j.text && !j.html)) throw new Error('Réponse vide');
 
     const htmlFinal = `<h3>${esc(LABELS[typeAction])} — ${esc(p.titre)} (${esc(p.niveau)})</h3>` + formaterReponseRiche(j.text, j.html);
     lastHtml = htmlFinal;
@@ -973,18 +1022,16 @@ async function genererDocument(typeAction, instructionSupplementaire = '') {
     $('r-meta').textContent = `Généré par IA (${j.model || 'Gemini'}) en ${((j.ms || 1800)/1000).toFixed(1)}s`;
     ajouterHistorique(`${LABELS[typeAction]} (${p.niveau})`, htmlFinal);
   } catch (err) {
-    // Secours local instantané si hors-ligne
     const htmlSecours = secoursDocument(typeAction, p, saison, lieu, duree);
     lastHtml = htmlSecours;
     $('r-out').innerHTML = htmlSecours;
-    $('r-meta').textContent = 'Modèle structuré de secours';
+    $('r-meta').textContent = 'Modèle de secours local';
   } finally {
     btns.forEach(b => b.disabled = false);
   }
 }
 
 function regenerer() { if (lastDocType) genererDocument(lastDocType); }
-
 function affinerDocument() {
   const val = $('refine-in').value.trim();
   if (!val) return;
@@ -996,66 +1043,31 @@ function ajouterHistorique(label, html) {
   histo.unshift({ label, html });
   histo = histo.slice(0, 8);
   $('hist').innerHTML = histo.map((h, k) => `<button data-k="${k}">${esc(h.label)}</button>`).join('');
-  $('hist').onclick = e => {
+  $('hist'].onclick = e => {
     const b = e.target.closest('button');
-    if (b) {
-      $('r-out').innerHTML = histo[+b.dataset.k].html;
-      $('r-label').textContent = histo[+b.dataset.k].label;
-    }
+    if (b) { $('r-out').innerHTML = histo[+b.dataset.k].html; $('r-label').textContent = histo[+b.dataset.k].label; }
   };
 }
 
 function secoursDocument(t, p, saison, lieu, duree) {
   const map = {
-    journal: `<h3>Journal de classe (${esc(p.niveau)})</h3>
-      <h4>1. Formulation officielle complète (FWB)</h4><p><strong>FMTTN &amp; Interdisciplinarité (${esc(saison)}) :</strong> ${esc(p.pendant)} <em>Attendus FMTTN :</em> ${esc(p.fmttn)} <em>Croisements :</em> ${esc(p.sciences)} | ${esc(p.mathsFr)}</p>
-      <h4>2. Formulation courte (Smartschool)</h4><p>FMTTN : ${esc(p.titre)} (${esc(duree)} — ${esc(lieu)}).</p>
-      <h4>3. Formulation élèves &amp; parents</h4><p>Aujourd'hui, nous avons appris à : ${esc(p.pendant.charAt(0).toLowerCase() + p.pendant.slice(1))}</p>`,
-    fiche: `<h3>Fiche de préparation : ${esc(p.titre)} (${esc(p.niveau)})</h3>
-      <p><strong>Contexte :</strong> ${esc(saison)} · ${esc(lieu)} · ${esc(duree)}</p>
-      <h4>Objectif opérationnel</h4><p>${esc(p.pendant)}</p>
-      <h4>Déroulement minuté</h4>
-      <ol>
-        <li><strong>Mise en situation (10 min) :</strong> Rappel des acquis (${esc(p.avant)}) et observation sécuritaire du matériel.</li>
-        <li><strong>Manipulation &amp; Geste technique (25 min) :</strong> ${esc(p.fmttn)} En lien avec : ${esc(p.sciences)}</li>
-        <li><strong>Structuration &amp; Trace (15 min) :</strong> ${esc(p.mathsFr)} Rangement et gestion durable (${esc(p.securite)}).</li>
-      </ol>
-      <h4>Grille d'évaluation</h4>
-      <table><thead><tr><th>Critère (Référentiel FWB)</th><th>Indicateur observable</th><th>Niveau de maîtrise</th></tr></thead>
-      <tbody>
-        <tr><td>Geste technique FMTTN</td><td>${esc(p.fmttn)}</td><td>☐ Acquis ☐ En cours ☐ À renforcer</td></tr>
-        <tr><td>Croisement Sciences / Maths</td><td>${esc(p.sciences)}</td><td>☐ Acquis ☐ En cours ☐ À renforcer</td></tr>
-        <tr><td>Sécurité &amp; Durabilité</td><td>${esc(p.securite)}</td><td>☐ Acquis ☐ En cours ☐ À renforcer</td></tr>
-      </tbody></table>`,
-    inclusif: `<h3>Aménagements raisonnables (${esc(p.niveau)})</h3>
-      <ul>
-        <li><strong>Ergonomie &amp; Motricité :</strong> Adaptation de la hauteur du poste (${esc(lieu)}), outils à prise facilitée et gabarits stabilisés.</li>
-        <li><strong>Élèves Dys / Lecture :</strong> Mode opératoire découpé en 3 pictogrammes séquentiels (1. Je prépare, 2. Je réalise le geste, 3. Je contrôle et je range).</li>
-        <li><strong>Attention &amp; TDAH :</strong> Travail en binômes à rôles complémentaires (Responsable matériel &amp; sécurité / Opérateur mesureur) avec rotation toutes les 10 minutes.</li>
-      </ul>`,
-    tuto: `<h3>Tuto express enseignant — ${esc(p.titre)}</h3>
-      <ul>
-        <li><strong>L'essentiel du palier :</strong> ${esc(p.pendant)}</li>
-        <li><strong>Préparation zéro stress :</strong> Préparez un bac par îlot de 3 à 4 élèves contenant : ${esc((p.materiel || []).join(', '))}.</li>
-        <li><strong>Astuce de terrain :</strong> ${esc(p.astuce)}</li>
-        <li><strong>Point de vigilance :</strong> ${esc(p.securite)}</li>
-      </ul>`
+    journal: `<h3>Journal de classe (${esc(p.niveau)})</h3><p><strong>FMTTN &amp; Interdisciplinarité (${esc(saison)}) :</strong> ${esc(p.pendant)}</p>`,
+    fiche: `<h3>Fiche de préparation : ${esc(p.titre)}</h3><p><strong>Contexte :</strong> ${esc(saison)} · ${esc(lieu)} · ${esc(duree)}</p><h4>Objectif</h4><p>${esc(p.pendant)}</p>`,
+    inclusif: `<h3>Aménagements raisonnables (${esc(p.niveau)})</h3><p>Adaptation de l'ergonomie, des supports visuels Dys et de la gestion de l'espace.</p>`,
+    tuto: `<h3>Tuto express — ${esc(p.titre)}</h3><p>${esc(p.pendant)} — Astuce : ${esc(p.astuce)}</p>`
   };
   return map[t] || map.fiche;
 }
 
-/* ============================================================================
-   CRÉATION D'UNE THÉMATIQUE SUR MESURE PAR L'IA (7 PALIERS DYNAMIQUES)
-   ============================================================================ */
 async function genererThemeSurMesure() {
   const sujet = $('custom-input').value.trim();
   if (sujet.length < 5) {
-    $('custom-status').textContent = '⚠️ Précisez un peu plus votre sujet (ex. : Station météo connectée, Atelier vélo-école…).';
+    $('custom-status').textContent = '⚠️ Précisez un peu plus votre sujet.';
     return;
   }
   const btn = $('btn-custom-go');
   btn.disabled = true;
-  $('custom-status').textContent = `⏳ L'IA construit les 7 paliers du continuum (M1 à S3) pour « ${sujet} »…`;
+  $('custom-status').textContent = `⏳ L'IA construit les 7 paliers pour « ${sujet} »…`;
 
   try {
     const r = await fetch('/api/ia', {
@@ -1063,10 +1075,10 @@ async function genererThemeSurMesure() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         mode: 'feedback',
-        dossier: `Création d'un continuum interdisciplinaire FMTTN / Sciences / Maths / Français (Tronc Commun FWB) sur le sujet : "${sujet}".`,
-        consigne: `Rédige 7 paragraphes correspondant aux 7 paliers : M1-M2, M3, P1-P2, P3-P4, P5-P6, S1-S2, S3. Pour chaque palier, écris une ligne formatée exactement ainsi : NIVEAU | Titre du palier | Mission de l'année | Attendu FMTTN | Croisement Sciences & Maths | Astuce de terrain`,
-        attendu: `7 lignes structurées avec le séparateur | couvrant la progression de la découverte sensorielle en M1 jusqu'à l'automatisation et au diagnostic en S3 sur le thème "${sujet}".`,
-        reponse: `Génère maintenant les 7 lignes complètes pour le thème : ${sujet}.`
+        dossier: `Continuum interdisciplinaire sur : "${sujet}".`,
+        consigne: `Rédige 7 lignes formatées ainsi : NIVEAU | Titre | Mission | FMTTN | Sciences/Maths | Astuce`,
+        attendu: `7 lignes avec séparateur |.`,
+        reponse: `Génère pour : ${sujet}.`
       })
     });
     const j = await r.json();
@@ -1076,73 +1088,50 @@ async function genererThemeSurMesure() {
     const lignes = txt.split('\n').map(l => l.trim()).filter(l => l.includes('|'));
 
     const paliersConstruits = niveauxDef.map((niv, idx) => {
-      const ligne = lignes[idx] || '';
-      const parts = ligne.split('|').map(s => s.trim());
-      const titre = parts[1] ? `${idx + 1}. ${parts[1].replace(/^\d+[\.\)]\s*/, '')}` : `${idx + 1}. Exploration et réalisation (${niv}) — ${sujet}`;
-      const pendant = parts[2] || `Réaliser les activités pratiques du projet « ${sujet} » adaptées au niveau ${niv}.`;
-      const fmttn = parts[3] || `Choisir et utiliser les outils, techniques et démarches du palier ${niv} pour le projet « ${sujet} ».`;
-      const sciMaths = parts[4] || `Observer, mesurer et structurer les données scientifiques et mathématiques liées à « ${sujet} ».`;
-      const astuce = parts[5] || `Préparer un poste de travail clair par sous-groupe pour favoriser l'autonomie sur « ${sujet} ».`;
-
+      const parts = (lignes[idx] || '').split('|').map(s => s.trim());
       return {
-        id: idx + 1,
-        niveau: niv,
-        icone: iconesDef[idx],
-        titre,
-        autonomie: idx < 2 ? "Accompagnement guidé vers l'autonomie" : idx < 5 ? "Autonomie sur mode opératoire et mesures" : "Conception, modélisation et diagnostic autonome",
-        avant: idx === 0 ? "Explorations sensorielles initiales du quotidien." : `Acquis du palier précédent (${niveauxDef[idx - 1]}) autour du projet « ${sujet} ».`,
-        pendant,
-        apres: idx === 6 ? "Fin du Tronc Commun : maîtrise citoyenne et technique complète." : `Préparation directe des compétences techniques et scientifiques du palier ${niveauxDef[idx + 1]}.`,
-        fmttn,
-        sciences: sciMaths,
-        mathsFr: `Mesures, tableaux/graphiques et traces structurées adaptés au niveau ${niv} sur le thème « ${sujet} ».`,
-        securite: `Respect des règles de sécurité, d'ergonomie et d'usage rationnel des ressources (${niv}).`,
-        materiel: [
-          `Matériel de manipulation et d'observation adapté au niveau ${niv} (${sujet})`,
-          `Instruments de mesure et de traçage du palier ${niv}`,
-          `Support de trace ou fiche de suivi (${niv})`,
-          `Équipement de sécurité et de rangement du poste`
-        ],
-        astuce
+        id: idx + 1, niveau: niv, icone: iconesDef[idx],
+        titre: parts[1] ? `${idx + 1}. ${parts[1]}` : `${idx + 1}. Projet ${sujet} (${niv})`,
+        autonomie: "Progressive selon le palier",
+        avant: "Acquis précédents.",
+        pendant: parts[2] || `Réaliser les activités sur « ${sujet} ».`,
+        apres: "Préparation pour la suite.",
+        fmttn: parts[3] || `Outils et techniques FMTTN pour ${sujet}.`,
+        sciences: parts[4] || `Observations scientifiques et mathématiques.`,
+        mathsFr: `Mesures et traces écrites.`,
+        securite: `Règles de sécurité et durabilité.`,
+        materiel: [`Matériel adapté (${sujet})`, `Instruments de mesure`],
+        astuce: parts[5] || `Organiser le poste par petits groupes.`
       };
     });
 
     THEMES.custom = {
-      id: 'custom',
-      hueBase: 315,
-      nomCourt: `Sur mesure : ${sujet.slice(0, 28)}`,
-      titre: `Continuum sur mesure : ${sujet}`,
-      sousTitre: `Progression interdisciplinaire générée sur mesure de M1 à S3 (FMTTN · Sciences · Maths · Français)`,
-      code: '528',
+      id: 'custom', hueBase: 315, nomCourt: `Sur mesure`,
+      titre: `Continuum : ${sujet}`, sousTitre: `Progression générée de M1 à S3`, code: '528',
       paliers: paliersConstruits
     };
 
     store.set('fmttn-custom-theme', THEMES.custom);
-    $('custom-status').textContent = `✅ Thématique « ${sujet} » générée avec succès sur les 7 paliers !`;
+    $('custom-status').textContent = `✅ Thème « ${sujet} » généré avec succès !`;
     activerTheme('custom');
   } catch (e) {
-    $('custom-status').textContent = `⚠️ Erreur lors de la génération : réessayez dans un instant.`;
+    $('custom-status').textContent = `⚠️ Erreur lors de la génération.`;
   } finally {
     btn.disabled = false;
   }
 }
 
-/* ============================================================================
-   MOTEUR DE L'ESCAPE GAME (ADAPTÉ DYNAMIQUEMENT AU THÈME ACTIF)
-   ============================================================================ */
 let SALLES_JEU = [];
 let G = { r: 0, s: 0, d: [] };
 
 function initEscapeGame() {
-  const th = getTheme();
-  SALLES_JEU = construireSallesDepuisPaliers(th);
+  SALLES_JEU = construireSallesDepuisPaliers(getTheme());
   G = { r: 0, s: 0, d: [] };
   drawGame();
 }
 
 function drawGame() {
-  const th = getTheme();
-  const codeFinal = String(th.code || '375');
+  const codeFinal = String(getTheme().code || '375');
   $('carnet').innerHTML = SALLES_JEU.map((_, i) => `<span class="dg">${G.d[i] || '?'}</span>`).join('');
   $('salles').innerHTML = SALLES_JEU.map((x, i) =>
     `<button class="pane ${i < G.r ? 'ok' : i === G.r ? 'on' : ''}" onclick="G.r=${i};G.s=0;drawGame()">
@@ -1154,8 +1143,7 @@ function drawGame() {
 
   if (G.s === 0) {
     $('scene').innerHTML = `<h2>${esc(x.nom)}</h2><p class="muted">${esc(x.hist)}</p>
-      <div class="dossier"><strong>Dossier de la salle (${esc(x.niv)}) :</strong> ${esc(x.dossier)}</div>
-      <p>Appuyez-vous sur ce dossier pour résoudre les 3 épreuves de la salle.</p>
+      <div class="dossier"><strong>Dossier :</strong> ${esc(x.dossier)}</div>
       <button class="btn pri" onclick="G.s=1;drawGame()">Entrer dans la salle ${esc(x.niv)}</button>`;
   } else if (G.s <= n) {
     const e = x.ep[G.s - 1];
@@ -1165,10 +1153,10 @@ function drawGame() {
       $('scene').querySelectorAll('.opt').forEach(b => b.onclick = () => repondreQcm(b, e));
     } else {
       $('scene').innerHTML = entete + `
-        <textarea id="g-rep" maxlength="600" placeholder="Votre réponse en 2 ou 3 phrases (sans aucun nom d'élève)…"></textarea>
+        <textarea id="g-rep" maxlength="600" placeholder="Votre réponse en 2 ou 3 phrases…"></textarea>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          <button class="btn pri" id="g-env">Valider ma réponse avec l'IA</button>
-          <button class="btn" id="g-aide" type="button">💡 Exemple de réponse</button>
+          <button class="btn pri" id="g-env">Valider avec l'IA</button>
+          <button class="btn" id="g-aide" type="button">💡 Exemple</button>
         </div>
         <div id="g-fb"></div>`;
       $('g-env').onclick = () => soumettreLibre(x, e);
@@ -1177,8 +1165,8 @@ function drawGame() {
   } else {
     const k = G.r;
     $('scene').innerHTML = `<h2>🔓 Salle ${esc(x.niv)} ouverte !</h2>
-      <p>Vous obtenez le chiffre <strong>${esc(x.digit)}</strong> pour le cadenas final.</p>
-      <button class="btn pri" onclick="G.d[${k}]='${x.digit}';G.r++;G.s=0;drawGame()">Passer à la salle suivante →</button>`;
+      <p>Chiffre obtenu : <strong>${esc(x.digit)}</strong></p>
+      <button class="btn pri" onclick="G.d[${k}]='${x.digit}';G.r++;G.s=0;drawGame()">Salle suivante →</button>`;
   }
 }
 
@@ -1187,79 +1175,60 @@ function repondreQcm(b, e) {
   if (i === e.a) {
     b.classList.add('good');
     $('scene').querySelectorAll('.opt').forEach(o => o.disabled = true);
-    fb.innerHTML = `<div class="fb"><strong>✅ Exact !</strong> ${esc(e.e)}</div>
-      <button class="btn pri" style="margin-top:10px" onclick="G.s++;drawGame()">Épreuve suivante →</button>`;
+    fb.innerHTML = `<div class="fb"><strong>✅ Exact !</strong> ${esc(e.e)}</div><button class="btn pri" style="margin-top:10px" onclick="G.s++;drawGame()">Suivant →</button>`;
   } else {
     b.classList.add('bad'); b.disabled = true;
-    fb.innerHTML = `<p class="muted" style="margin-top:8px">Pas tout à fait : relisez le dossier de la salle et réessayez.</p>`;
+    fb.innerHTML = `<p class="muted" style="margin-top:8px">Pas tout à fait.</p>`;
   }
 }
 
 async function soumettreLibre(x, e) {
   const rep = $('g-rep').value.trim();
-  if (rep.length < 20) {
-    $('g-fb').innerHTML = `<p class="muted" style="margin-top:8px">Développez un peu votre réponse (2 ou 3 phrases).</p>`;
-    return;
-  }
+  if (rep.length < 20) { $('g-fb').innerHTML = `<p class="muted" style="margin-top:8px">Développez un peu.</p>`; return; }
   $('g-env').disabled = true;
-  $('g-fb').innerHTML = `<p class="muted" style="margin-top:8px">⏳ Analyse bienveillante de votre réponse par l'IA…</p>`;
+  $('g-fb').innerHTML = `<p class="muted" style="margin-top:8px">⏳ Analyse…</p>`;
   let txt = '', ok = false;
   try {
     const r = await fetch('/api/ia', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mode: 'feedback', dossier: x.dossier, consigne: e.q, attendu: e.at, reponse: rep })
     });
     const j = await r.json();
     if (r.ok && j.text) { txt = j.text; ok = true; }
   } catch {}
 
-  $('g-fb').innerHTML = (ok ? `<div class="fb"><strong>Retour du conseiller IA :</strong>\n${esc(txt)}</div>` : '') +
-    `<div class="fb"><strong>Réponse de référence :</strong> ${esc(e.at)}</div>
-     <button class="btn pri" style="margin-top:10px" onclick="G.s++;drawGame()">Continuer →</button>`;
+  $('g-fb').innerHTML = (ok ? `<div class="fb"><strong>Conseiller IA :</strong>\n${esc(txt)}</div>` : '') +
+    `<div class="fb"><strong>Référence :</strong> ${esc(e.at)}</div><button class="btn pri" style="margin-top:10px" onclick="G.s++;drawGame()">Continuer →</button>`;
   $('g-env').disabled = false;
 }
 
 function drawCadenasFinal(codeFinal) {
-  $('scene').innerHTML = `<h2>🔐 Le cadenas final</h2>
-    <p>Saisissez les 3 chiffres récoltés dans les salles (indice : <strong>${esc(codeFinal)}</strong>) :</p>
+  $('scene').innerHTML = `<h2>🔐 Cadenas final</h2>
+    <p>Saisissez les 3 chiffres (${esc(codeFinal)}) :</p>
     <div class="codes">${[0,1,2].map(i => `<input class="c" maxlength="1" inputmode="numeric" value="${esc(G.d[i] || '')}">`).join('')}</div>
     <div id="g-fb"></div>
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button class="btn pri" id="g-ouv">Ouvrir et accéder au Studio Documentaire</button>
-      <button class="btn" onclick="initEscapeGame()">Recommencer le défi</button>
-    </div>`;
+    <button class="btn pri" id="g-ouv">Ouvrir</button>`;
   const cs = [...$('scene').querySelectorAll('.c')];
   cs.forEach((c, i) => c.oninput = () => { if (c.value && cs[i + 1]) cs[i + 1].focus(); });
   $('g-ouv').onclick = () => {
     if (cs.map(c => c.value).join('') === codeFinal) {
-      $('scene').innerHTML = `<h2>🎉 Félicitations ! Le continuum est déverrouillé !</h2>
-        <p>Vous avez relié les paliers clés de « <strong>${esc(getTheme().titre)}</strong> ». Passez maintenant dans le Studio Documentaire pour générer vos fiches de préparation, journaux de classe et aménagements Dys/TDAH sur les 7 paliers.</p>
-        <button class="btn pri" onclick="changerVue('studio')">📘 Ouvrir le Studio des 7 Paliers &amp; Générateur de Documents</button>`;
-    } else {
-      $('g-fb').innerHTML = `<p class="muted" style="text-align:center">Code incorrect : vérifiez les 3 chiffres en haut à droite (${esc(codeFinal)}).</p>`;
-    }
+      $('scene').innerHTML = `<h2>🎉 Continuum déverrouillé !</h2><button class="btn pri" onclick="changerVue('studio')">📘 Ouvrir le Studio Documentaire</button>`;
+    } else { $('g-fb').innerHTML = `<p class="muted" style="text-align:center">Code incorrect.</p>`; }
   };
 }
 
-/* ============================================================================
-   COPIE WORD/DOCS ET IMPRESSION PDF PROPRE
-   ============================================================================ */
 async function copier() {
   const el = $('r-out'), btn = $('b-copy'), old = btn.textContent;
   let ok = false;
   try {
-    await navigator.clipboard.write([new ClipboardItem({
-      'text/html': new Blob([el.innerHTML], { type: 'text/html' }),
-      'text/plain': new Blob([el.innerText], { type: 'text/plain' })
-    })]);
+    await navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([el.innerHTML], { type: 'text/html' }), 'text/plain': new Blob([el.innerText], { type: 'text/plain' }) })]);
     ok = true;
   } catch {
     const r = document.createRange(); r.selectNodeContents(el);
     const s = getSelection(); s.removeAllRanges(); s.addRange(r);
     ok = document.execCommand('copy'); s.removeAllRanges();
   }
-  btn.textContent = ok ? '✅ Copié !' : 'Copie impossible';
+  btn.textContent = ok ? '✅ Copié !' : 'Erreur';
   setTimeout(() => btn.textContent = old, 2000);
 }
 
